@@ -1,4 +1,4 @@
-// app/contact/page.js
+// app/dashboard/page.js
 'use client';
 
 import { useRouter } from 'next/navigation';
