@@ -25,6 +25,7 @@ export default function Home() {
         </ol>
 
         <nav className={styles.ctas}>
+          <Link className={styles.primary} href="/dashboard">Dashboard</Link>
           <Link className={styles.primary} href="/signup">Signup</Link>
           <Link className={styles.primary} href="/login">Login</Link>
           <Link className={styles.primary} href="/profile">Profile</Link>

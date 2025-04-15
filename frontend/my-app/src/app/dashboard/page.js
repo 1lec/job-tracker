@@ -2,13 +2,17 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import styles from './dashboard.module.css';
 
 export default function HelloPage() {
   const router = useRouter();
 
   return (
     <main>
-      <h1>Hello, world!</h1>
+      <div className={styles.wrapper}>
+        <h1>Hello, world! I am the Dashboard Page</h1>
+      </div>
+
       <button
         onClick={() => router.push('/')}
         style={{
