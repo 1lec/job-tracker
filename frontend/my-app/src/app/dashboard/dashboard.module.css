@@ -1,6 +1,6 @@
 .wrapper {
     padding: 2rem;
-    min-height: 100vh;
+    min-height: 85vh;
     background-color: #0d0d0d;
     color: #ffffff;
     font-family: 'Courier New', ;
@@ -12,7 +12,7 @@
     color: #ff6a00;
     text-align: center;
     margin-bottom: 1.5rem;
-    /* text-shadow: 0 0 5px #ff6a00; */
+    text-shadow: 0 0 5px #ff6a00;
   }
   
   .buttonRow {

@@ -10,7 +10,7 @@ export default function Home() {
         <div style={{display: 'flex', alignSelf:'center'}}>
           <Image
             className={styles.logo}
-            src="/capstone-job-tracker-logo.png"
+            src="/capstone-job-tracker-logo-transparent.png"
             alt="jobtracker logo"
             width={180}
             height={180}
@@ -18,7 +18,7 @@ export default function Home() {
           />
         </div>
 
-        <h1 className={styles.title}>CS367 Job Tracker Capstone Project</h1>
+        <h1 className={styles.title}>Job Tracker Application (Capstone CS467)</h1>
 
         <ol>
           <li>
