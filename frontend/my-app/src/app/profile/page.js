@@ -2,58 +2,42 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import styles from '../styles/branding.module.css'; // Reuse contact styles
 
-export default function HelloPage() {
+export default function ProfilePage() {
   const router = useRouter();
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'Arial, sans-serif' }}>
+    <main className={styles.wrapper}>
+      <h1 className={styles.title}>Profile Page</h1>
 
-      <div style={{ marginBottom: '2rem' }}>
-        <h1>Profile Page</h1>
-      </div>
-
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: '1.5rem' }}>
         <p><strong>Name:</strong> Karan Patel</p>
       </div>
 
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: '1.5rem' }}>
         <p><strong>Picture:</strong></p>
+        {/* Placeholder for image if needed */}
+        <div style={{
+          width: '120px',
+          height: '120px',
+          backgroundColor: '#333',
+          borderRadius: '8px'
+        }} />
       </div>
-     
-      <p> <strong>Skills:</strong> JavaScript, SQL, React</p>
 
-      <div style={{ marginTop: '1.5rem' }}>
+      <p style={{ marginBottom: '2rem' }}>
+        <strong>Skills:</strong> JavaScript, SQL, React
+      </p>
 
-      <button
-        style={{
-          marginRight: '1rem',
-          padding: '0.5rem 1rem',
-          backgroundColor: '#0070f3',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Edit Profile
-      </button>
+      <div className={styles.buttonRow}>
+        <button className={styles.buttonFunction}>
+          Edit Profile
+        </button>
 
-      <button
-        onClick={() => router.push('/')}
-        style={{
-          padding: '0.5rem 1rem',
-          backgroundColor: '#0070f3',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Back to Home
-      </button>
-
-
+        <button className={styles.buttonFunction} onClick={() => router.push('/')}>
+          Back to Home
+        </button>
       </div>
     </main>
   );
