@@ -57,7 +57,7 @@ export default function JobDashboard() {
           <button className={styles.buttonFunction} onClick={() => console.log("Do something (contacts)")}>
             Contacts
           </button>
-          <button className={styles.buttonFunction} onClick={() => console.log("Do something (Add a job)")}>
+          <button className={styles.buttonLink} onClick={() => console.log("Do something (Add a job)")}>
             Add Job
           </button>
 
@@ -95,7 +95,7 @@ export default function JobDashboard() {
       </table>
 
       <nav className={styles.ctas}>
-        <Link href="/" className={styles.buttonLink}>
+        <Link href="/" className={styles.buttonFunction}>
           Back
         </Link>
       </nav>

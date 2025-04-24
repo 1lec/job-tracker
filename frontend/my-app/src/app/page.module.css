@@ -63,7 +63,7 @@
 
 .ctas a {
   appearance: none;
-  border-radius: 128px;
+  /* border-radius: 128px; */
   height: 48px;
   padding: 0 20px;
   border: none;
@@ -166,4 +166,40 @@ a.secondary {
     /* filter: invert(); */
     border-radius: 24px;
   }
+}
+
+.buttonLink {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #ff6a00;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.buttonLink:hover {
+  background-color: #fab366;
+}
+
+.buttonFunction {
+  /* Hard coded height*/
+  height: 34.73px; 
+  background-color: #111111;
+  color: #ff6a00;
+  border: 1px solid #ff6a00;
+  padding: 0.3rem 0.6rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.buttonFunction:hover {
+  background-color: #ff6a00;
+  color: #000000;
 }
