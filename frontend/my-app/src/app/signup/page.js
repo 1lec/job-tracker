@@ -11,20 +11,20 @@ export default function HelloPage() {
       <h1>Signup</h1><br></br>
       <p>New to Job Tracker? Complete the form to create your account and optimize your job search!</p><br></br>
       <form>
-        <label htmlFor="first_name" required>First Name:</label><br></br>
-        <input type="text"></input><br></br>
+        <label htmlFor="first_name">First Name:</label><br></br>
+        <input type="text" id="first_name" name="first_name" required></input><br></br>
 
-        <label htmlFor="last_name" required>Last Name:</label><br></br>
-        <input type="text"></input><br></br>
+        <label htmlFor="last_name">Last Name:</label><br></br>
+        <input type="text" id="last_name" name="last_name" required></input><br></br>
 
-        <label htmlFor="email" required>Email Address:</label><br></br>
-        <input type="email"></input><br></br>
+        <label htmlFor="email">Email Address:</label><br></br>
+        <input type="email" id="email" name="email" required></input><br></br>
 
-        <label htmlFor="password" required>Password:</label><br></br>
-        <input type="password"></input><br></br>
+        <label htmlFor="password">Password:</label><br></br>
+        <input type="password" id="password" name="password" required></input><br></br>
 
-        <label htmlFor="skills" required>Skills:</label><br></br>
-        <input type="text"></input><br></br><br></br>
+        <label htmlFor="skills">Skills:</label><br></br>
+        <input type="text" id="skills" name="skills" required></input><br></br><br></br>
 
         <input type="submit" value="Sign Up"></input>
       </form>
