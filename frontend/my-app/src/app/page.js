@@ -7,14 +7,17 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/capstone-job-tracker-logo.png"
-          alt="jobtracker logo"
-          width={180}
-          height={180}
-          priority
-        />
+        <div style={{display: 'flex', alignSelf:'center'}}>
+          <Image
+            className={styles.logo}
+            src="/capstone-job-tracker-logo.png"
+            alt="jobtracker logo"
+            width={180}
+            height={180}
+            priority
+          />
+        </div>
+
         <h1 className={styles.title}>CS367 Job Tracker Capstone Project</h1>
 
         <ol>
@@ -25,11 +28,11 @@ export default function Home() {
         </ol>
 
         <nav className={styles.ctas}>
-          <Link className={styles.primary} href="/dashboard">Dashboard</Link>
-          <Link className={styles.primary} href="/signup">Signup</Link>
-          <Link className={styles.primary} href="/login">Login</Link>
-          <Link className={styles.primary} href="/profile">Profile</Link>
-          <Link className={styles.primary} href="/contact">Contact</Link>
+          <Link className={styles.buttonFunction} href="/dashboard">Dashboard</Link>
+          <Link className={styles.buttonFunction} href="/signup">Signup</Link>
+          <Link className={styles.buttonFunction} href="/login">Login</Link>
+          <Link className={styles.buttonFunction} href="/profile">Profile</Link>
+          <Link className={styles.buttonFunction} href="/contact">Contact</Link>
         </nav>
 
         {/* <div className={styles.ctas}>
