@@ -10,7 +10,7 @@ export default function Home() {
         <div style={{display: 'flex', alignSelf:'center'}}>
           <Image
             className={styles.logo}
-            src="/capstone-job-tracker-logo-transparent.png"
+            src="/capstone-cooked-logo-transparent.png"
             alt="jobtracker logo"
             width={180}
             height={180}
@@ -18,21 +18,24 @@ export default function Home() {
           />
         </div>
 
-        <h1 className={styles.title}>Job Tracker Application (Capstone CS467)</h1>
-
+        <h1 className={styles.title} style={{color: "var(--beaverOrange"}}>ur COOKED job tracker</h1>
+    
         <ol>
           <li>
-            Get a job and navigate through the tabs <code>signup • login • profile • contact</code>.
+          Job Tracker Application (CS467) — your streamlined tool for managing job applications, tracking progress, and staying organized.
+          </li>
+          <li>
+            Get a job and navigate through the tabs <code>dashboard • contact • profile</code>.
           </li>
           <li>Best of luck!</li>
         </ol>
 
         <nav className={styles.ctas}>
           <Link className={styles.buttonFunction} href="/dashboard">Dashboard</Link>
-          <Link className={styles.buttonFunction} href="/signup">Signup</Link>
-          <Link className={styles.buttonFunction} href="/login">Login</Link>
           <Link className={styles.buttonFunction} href="/profile">Profile</Link>
           <Link className={styles.buttonFunction} href="/contact">Contact</Link>
+          <Link className={styles.buttonLink} href="/signup">Signup</Link>
+          <Link className={styles.buttonLink} href="/login">Login</Link>
         </nav>
 
         {/* <div className={styles.ctas}>

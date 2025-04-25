@@ -1,5 +1,6 @@
 // // src/app/components/Header.js
 
+import { Rowdies } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -22,13 +23,18 @@ export default function Header() {
         boxShadow: "0px 5px 10px rgba(109, 42, 3, 0.68)",
     }}>
       <Link href="/">
-        <Image
-          src="/capstone-job-tracker-icon-logo-inverted.png"
-          alt="jobtracker logo"
-          width={200}
-          height={48}
-          style={{ objectFit: "contain", borderRadius: "128px"}}
-        />
+        <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
+          <Image
+            src="/capstone-cooked-face-logo-white.png"
+            alt="jobtracker logo"
+            width={180}
+            height={48}
+            style={{ objectFit: "contain", borderRadius: "128px", marginRight:'10px'}}
+          />
+          <h1 style={{fontSize: "1.5rem"}}>
+            (CS467 Job Tracker) 
+          </h1> 
+        </div>
       </Link>
       <nav style={{ display: "flex", gap: "1.5rem" }}>
         <Link href="/Dashboard">Dashboard</Link>
