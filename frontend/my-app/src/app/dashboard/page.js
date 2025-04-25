@@ -47,11 +47,13 @@ export default function JobDashboard() {
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', marginBottom: '1rem'}}>
         <div>
 
-        <h1 className={styles.title}>Job Applications</h1>
-
-        <nav className={styles.ctas}>
+        <h1 className={styles.title}>Dashboard</h1>
+        <nav className={styles.ctas} style={{marginBottom: "1.5rem"}}>
             <Link href="/profile" className={styles.buttonLink}> View Profile </Link>
         </nav>
+
+        <h2>Job Applications</h2>
+
         </div>
         <div className={styles.buttonRow}>
           <button className={styles.buttonFunction} onClick={() => console.log("Do something (contacts)")}>
@@ -96,7 +98,7 @@ export default function JobDashboard() {
 
       <nav className={styles.ctas}>
         <Link href="/" className={styles.buttonFunction}>
-          Back
+          Back to Home
         </Link>
       </nav>
 

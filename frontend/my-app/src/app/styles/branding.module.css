@@ -1,7 +1,7 @@
 .wrapper {
   padding: 2rem;
-  min-height: 100vh;
-  background-color: #0d0d0d;
+  min-height: 85vh;
+  background-color: var(--background);
   color: #ffffff;
   font-family: 'Courier New', ;
 }

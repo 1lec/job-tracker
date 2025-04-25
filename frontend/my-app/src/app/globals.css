@@ -1,6 +1,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --beaverOrange: #ff6a00;
 }
 
 @media (prefers-color-scheme: dark) {
