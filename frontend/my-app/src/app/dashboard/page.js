@@ -44,25 +44,23 @@ export default function JobDashboard() {
   
   return (
     <main className={styles.wrapper}>
+      <h1 className={styles.title}>Dashboard</h1>
       <div style={{ display: 'flex', flexDirection: 'row', justifyContent:'space-between', alignItems: 'center', marginBottom: '1rem'}}>
         <div>
+          <nav className={styles.ctas} style={{marginBottom: "1.5rem"}}>
+              <Link href="/profile" className={styles.buttonLink}> View Profile </Link>
+          </nav>
 
-        <h1 className={styles.title}>Dashboard</h1>
-        <nav className={styles.ctas} style={{marginBottom: "1.5rem"}}>
-            <Link href="/profile" className={styles.buttonLink}> View Profile </Link>
-        </nav>
+          <h2>Job Applications</h2>
 
-        <h2>Job Applications</h2>
-
-        </div>
-        <div className={styles.buttonRow}>
-          <button className={styles.buttonFunction} onClick={() => console.log("Do something (contacts)")}>
-            Contacts
-          </button>
-          <button className={styles.buttonLink} onClick={() => console.log("Do something (Add a job)")}>
-            Add Job
-          </button>
-
+          </div>
+          <div className={styles.buttonRow}>
+            <button className={styles.buttonFunction} onClick={() => console.log("Do something (contacts)")}>
+              Contacts
+            </button>
+            <button className={styles.buttonLink} onClick={() => console.log("Do something (Add a job)")}>
+              Add Job
+            </button>
         </div>
         
       </div>
