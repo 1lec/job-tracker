@@ -11,7 +11,7 @@
   align-items: center;
   justify-items: center;
   min-height: 85svh;
-  padding: 80px;
+  padding: 0px 80px 80px 80px;
   gap: 64px;
   font-family: var(--font-geist-sans);
 }
