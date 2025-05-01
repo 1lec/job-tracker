@@ -12,5 +12,10 @@ public class JobTrackerContext : DbContext
     {
     }
 
+    public DbSet<Contact> Contacts { get; set; } = null!;
     public DbSet<Job> Jobs { get; set; } = null!;
+    public DbSet<Login> Logins { get; set; } = null!;
+    public DbSet<Skill> Skills { get; set; } = null!;
+    public DbSet<Status> Statuses { get; set; } = null!;
+    public DbSet<User> Users { get; set; } = null!;
 }
