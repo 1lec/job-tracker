@@ -11,5 +11,8 @@ public class Login
 
     // Foreign Key(s)
     public long UserId { get; set; }
+
+    // Navigation Properties
+    public virtual User User { get; set; }
 }
 

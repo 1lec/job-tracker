@@ -7,4 +7,7 @@ public class Status
 {
     public long Id { get; set; }
     public string Name { get; set; }
+
+    // Navigation Properties (list of Jobs of a given status)
+    public virtual ICollection<Job> Jobs { get; set; }
 }
