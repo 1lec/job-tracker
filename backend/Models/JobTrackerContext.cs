@@ -18,4 +18,8 @@ public class JobTrackerContext : DbContext
     public DbSet<Skill> Skills { get; set; } = null!;
     public DbSet<Status> Statuses { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
+
+    // Junction Tables
+    public DbSet<JobSkill> JobSkills { get; set; } = null!;
+    public DbSet<UserSkill> UserSkills { get; set; } = null!;
 }
