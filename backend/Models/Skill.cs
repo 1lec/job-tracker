@@ -9,7 +9,9 @@ namespace JobTracker.Backend.Models;
 public class Skill
 {
     public long Id { get; set; }
-    public string Name { get; set; }
+
+    // Required Properties
+    public required string Name { get; set; }
 
     // Navigation properties
     public ICollection<JobSkill> JobSkills { get; set; } = new List<JobSkill>();

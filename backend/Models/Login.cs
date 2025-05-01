@@ -6,13 +6,15 @@ namespace JobTracker.Backend.Models;
 public class Login
 {
     public long Id { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
+
+    // Required Properties
+    public required string Email { get; set; }
+    public required string Password { get; set; }
 
     // Foreign Key(s)
     public long UserId { get; set; }
 
     // Navigation Properties
-    public virtual User User { get; set; }
+    public required virtual User User { get; set; }
 }
 

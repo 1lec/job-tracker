@@ -9,15 +9,17 @@ namespace JobTracker.Backend.Models;
 public class Contact
 {
     public long Id { get; set; }
-    public string FirstName { get; set; } // PascalCase is convention for properties, apparently
-    public string LastName { get; set; }
-    public string Email { get; set; }
-    public string Company { get; set; }
+
+    // Nullable Properties
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Email { get; set; }
+    public string? Company { get; set; }
 
     // Foreign Key(s)
-    public long UserId { get; set; }
+    public required long UserId { get; set; }
 
     // Navigation Properties (connects a Contact back to its specific User)
-    public virtual User User { get; set; }
+    public required virtual User User { get; set; }
 }
 

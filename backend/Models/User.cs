@@ -9,13 +9,15 @@ namespace JobTracker.Backend.Models;
 public class User
 {
     public long Id { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+
+    // Required Properties
+    public required string FirstName { get; set; }
+    public required string LastName { get; set; }
 
     // Navigation Properties
-    public virtual ICollection<Job> Jobs { get; set; }
-    public virtual ICollection<Contact> Contacts { get; set; }
-    public virtual ICollection<Login> Logins { get; set; }
+    public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
+    public virtual ICollection<Contact> Contacts { get; set; } = new List<Contact>();
+    public virtual ICollection<Login> Logins { get; set; } = new List<Login>();
 
     // Navigation Properties for M:M Relationships
     public ICollection<UserSkill> UserSkills { get; set; } = new List<UserSkill>();

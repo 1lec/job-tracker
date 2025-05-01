@@ -11,8 +11,8 @@ public class JobSkill
     public long Id { get; set; }
 
     // Foreign Keys
-    public long JobId { get; set; }
-    public long SkillId { get; set; }
+    public required long JobId { get; set; }
+    public required long SkillId { get; set; }
 
     // Navigation Properties
     public Job? Job { get; set; }

@@ -11,8 +11,8 @@ public class UserSkill
     public long Id { get; set; }
 
     // Foreign Keys
-    public long UserId { get; set; }
-    public long SkillId { get; set; }
+    public required long UserId { get; set; }
+    public required long SkillId { get; set; }
 
     // Navigation Properties
     public User? User { get; set; }
