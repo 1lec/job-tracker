@@ -1,4 +1,4 @@
-// // src/app/components/Header.js
+// src/app/components/Header.js
 
 import { Rowdies } from "next/font/google";
 import Image from "next/image";
