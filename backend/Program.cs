@@ -1,8 +1,15 @@
+using Microsoft.EntityFrameworkCore;
+using JobTracker.Backend.Models; // Adjust based on your namespace structure
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
+
+// Add in-memory database for development purposes
+builder.Services.AddDbContext<JobTrackerContext>(options =>
+    options.UseInMemoryDatabase("JobTrackerDb")); // This uses an in-memory database
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
