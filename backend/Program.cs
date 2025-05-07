@@ -4,6 +4,19 @@ using JobTracker.Backend.Models; // Adjust based on your namespace structure
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Configure CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000") // Use your frontend URL and port
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+// Add controllers etc.
 builder.Services.AddControllers();
 
 // Add in-memory database for development purposes
@@ -24,6 +37,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+// Use CORS with the defined policy
+app.UseCors("AllowFrontend");
 
 app.MapControllers();
 
