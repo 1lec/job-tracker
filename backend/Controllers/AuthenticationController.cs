@@ -16,6 +16,8 @@ namespace JobTracker.Backend.Controllers
         [HttpPost("signup")]
         public IActionResult Signup([FromBody] SignupRequest request)
         {
+            Console.WriteLine($"Received signup request: {request.FirstName} {request.LastName} ({request.Email})");
+
             // Check if user already exists by email
             if (registeredUsers.Any(u => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase)))
             {
@@ -24,6 +26,8 @@ namespace JobTracker.Backend.Controllers
 
             // Store user (in production, hash password and store in DB)
             registeredUsers.Add(request);
+
+            Console.WriteLine($"User signed up successfully: {request.FirstName} {request.LastName} ({request.Email})");
 
             return Ok(new
             {
@@ -48,8 +52,11 @@ namespace JobTracker.Backend.Controllers
 
             if (user == null)
             {
+                Console.WriteLine($"Failed login attempt for email: {request.Email}");
                 return Unauthorized("Invalid email or password.");
             }
+            
+            Console.WriteLine($"User with email {request.Email} logged in successfully.");
 
             return Ok(new
             {
