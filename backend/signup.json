@@ -1,0 +1,7 @@
+﻿{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john@example.com",
+  "password": "secret123",
+  "skills": ["C#", "SQL"]
+}
