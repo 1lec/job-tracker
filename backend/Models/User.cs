@@ -13,11 +13,12 @@ public class User
     // Required Properties
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
+    public required string Email { get; set; }
+    public required string Password { get; set; }
 
     // Navigation Properties
     public virtual ICollection<Job> Jobs { get; set; } = new List<Job>();
     public virtual ICollection<Contact> Contacts { get; set; } = new List<Contact>();
-    public virtual ICollection<Login> Logins { get; set; } = new List<Login>();
 
     // Navigation Properties for M:M Relationships
     public ICollection<UserSkill> UserSkills { get; set; } = new List<UserSkill>();
