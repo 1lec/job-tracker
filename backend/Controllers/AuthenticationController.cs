@@ -1,7 +1,11 @@
 // This controller was created with assistant from ChatGPT. About an hour of work was saved. The thread can be
 // found here: https://chatgpt.com/share/681a8da1-de0c-800a-a24c-18d125721825.
 
+// Additional changes to this Authentication Controller were made with help from ChatGPT, saving at least 30
+// minutes of work. Thread: https://chatgpt.com/share/681fc8b9-6a30-800a-8298-55d2415c502e
+
 using Microsoft.AspNetCore.Mvc;
+using JobTracker.Backend.Models;
 using JobTracker.Backend.Models.Auth;
 
 namespace JobTracker.Backend.Controllers
@@ -10,34 +14,47 @@ namespace JobTracker.Backend.Controllers
     [Route("api/[controller]")]
     public class AuthenticationController : ControllerBase
     {
-        // In-memory user store for demo purposes
-        private static List<SignupRequest> registeredUsers = new();
+        private readonly JobTrackerContext _context;
+
+        public AuthenticationController(JobTrackerContext context)
+        {
+            _context = context;
+        }
 
         [HttpPost("signup")]
         public IActionResult Signup([FromBody] SignupRequest request)
         {
             Console.WriteLine($"Received signup request: {request.FirstName} {request.LastName} ({request.Email})");
 
-            // Check if user already exists by email
-            if (registeredUsers.Any(u => u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase)))
+            // Check if the email is already registered in the database
+            if (_context.Users.Any(u => u.Email == request.Email))
             {
                 return Conflict("Email is already registered.");
             }
 
-            // Store user (in production, hash password and store in DB)
-            registeredUsers.Add(request);
+            // Create a new User entity
+            var newUser = new User
+            {
+                FirstName = request.FirstName,
+                LastName = request.LastName,
+                Email = request.Email,
+                Password = request.Password // Must hash passwords in production
+            };
 
-            Console.WriteLine($"User signed up successfully: {request.FirstName} {request.LastName} ({request.Email})");
+            // Add to database and save
+            _context.Users.Add(newUser);
+            _context.SaveChanges();
+
+            Console.WriteLine($"User signed up successfully: {newUser.FirstName} {newUser.LastName} ({newUser.Email})");
 
             return Ok(new
             {
                 message = "Signup successful.",
                 user = new
                 {
-                    request.FirstName,
-                    request.LastName,
-                    request.Email,
-                    request.Skills
+                    newUser.FirstName,
+                    newUser.LastName,
+                    newUser.Email
                 }
             });
         }
@@ -45,9 +62,8 @@ namespace JobTracker.Backend.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
-            var user = registeredUsers.FirstOrDefault(u =>
-                u.Email.Equals(request.Email, StringComparison.OrdinalIgnoreCase) &&
-                u.Password == request.Password // NOTE: never store passwords in plain text in real apps
+            var user = _context.Users.FirstOrDefault(u =>
+                u.Email == request.Email && u.Password == request.Password
             );
 
             if (user == null)
@@ -55,7 +71,7 @@ namespace JobTracker.Backend.Controllers
                 Console.WriteLine($"Failed login attempt for email: {request.Email}");
                 return Unauthorized("Invalid email or password.");
             }
-            
+
             Console.WriteLine($"User with email {request.Email} logged in successfully.");
 
             return Ok(new
@@ -65,8 +81,7 @@ namespace JobTracker.Backend.Controllers
                 {
                     user.FirstName,
                     user.LastName,
-                    user.Email,
-                    user.Skills
+                    user.Email
                 }
             });
         }
