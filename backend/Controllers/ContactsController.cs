@@ -5,10 +5,10 @@ using JobTracker.Backend.Models;
 
 [Route("api/[controller]")]
 [ApiController]
-public class ContactController : ControllerBase
+public class ContactsController : ControllerBase
 {
     private readonly JobTrackerContext _context;
-    public ContactController(JobTrackerContext context)
+    public ContactsController(JobTrackerContext context)
     {
         _context = context;
     }
@@ -64,7 +64,7 @@ public class ContactController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Contact (update)
+    // POST: api/Contact (Insert)
     [HttpPost]
     public async Task<ActionResult<Contact>> PostContact(Contact contact)
     {

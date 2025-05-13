@@ -5,10 +5,10 @@ using JobTracker.Backend.Models;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UserController : ControllerBase
+public class UsersController : ControllerBase
 {
     private readonly JobTrackerContext _context;
-    public UserController(JobTrackerContext context)
+    public UsersController(JobTrackerContext context)
     {
         _context = context;
     }
@@ -64,7 +64,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/User (create)
+    // POST: api/User (Insert)
     [HttpPost]
     public async Task<ActionResult<User>> PostUser(User user)
     {
