@@ -6,12 +6,6 @@ USERS
 user_id      SERIAL PRIMARY KEY
 first_name   VARCHAR(100)
 last_name    VARCHAR(100)
-
-
-LOGINS
-------
-login_id     SERIAL PRIMARY KEY
-user_id      INT REFERENCES users(user_id)
 email        VARCHAR(255) UNIQUE NOT NULL
 password     VARCHAR(255) NOT NULL
 
@@ -71,13 +65,7 @@ skill_id      INT REFERENCES skills(skill_id)
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
     first_name VARCHAR(100),
-    last_name VARCHAR(100)
-);
-
--- logins
-CREATE TABLE logins (
-    login_id SERIAL PRIMARY KEY,
-    user_id INT REFERENCES users(user_id),
+    last_name VARCHAR(100),
     email VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL
 );
@@ -132,11 +120,11 @@ CREATE TABLE job_skills (
 
 -- Queries we will need for passing information from database to backend to frontend
 
--- Login
+-- User
 
-Insert into logins (user_id, email, password) Values (?,?,?);
+Insert into users (first_name, last_name, email, password) Values (?,?,?);
 
-select * from logins;
+select * from users;
 
 -- contacts table
 
