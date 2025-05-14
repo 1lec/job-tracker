@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using JobTracker.Backend.Models; // Adjust based on your namespace structure
+using JobTracker.Backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("JobTrackerContext") ?? throw new InvalidOperationException("Connection string 'JobTrackerContext' not found.");
@@ -22,7 +22,9 @@ builder.Services.AddControllers();
 
 // Add in-memory database for development purposes
 builder.Services.AddDbContext<JobTrackerContext>(options =>
-    options.UseInMemoryDatabase("JobTrackerDb")); // This uses an in-memory database
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    //options.UseInMemoryDatabase("JobTrackerDb")); // This uses an in-memory database
+    
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
