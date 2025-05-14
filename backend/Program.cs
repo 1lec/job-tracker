@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using JobTracker.Backend.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+var connectionString = builder.Configuration.GetConnectionString("JobTrackerContext") ?? throw new InvalidOperationException("Connection string 'JobTrackerContext' not found.");
 
 // Add services to the container.
 
