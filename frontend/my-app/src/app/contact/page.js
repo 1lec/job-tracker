@@ -31,6 +31,22 @@ export default function ContactPage() {
     fetchContacts();
   }, []);
 
+  async function handleDelete(id) {
+    try {
+      const res = await fetch(`https://localhost:7091/api/contacts/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        throw new Error('Failed to delete contact');
+      }
+      // Remove the deleted contact from the state
+      setContacts((prevContacts) => prevContacts.filter(contact => contact.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert('Error deleting contact');
+    }
+  }
+
   return (
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Contacts</h1>
@@ -64,7 +80,9 @@ export default function ContactPage() {
                   <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }}>
                     Edit
                   </button>
-                  <button className={styles.cookedButton}>Delete</button>
+                  <button className={styles.cookedButton} onClick={() => handleDelete(id)}>
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}
