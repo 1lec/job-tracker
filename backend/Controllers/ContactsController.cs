@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using JobTracker.Backend.Models;
-using JobTracker.Backend.Models;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -17,14 +16,14 @@ public class ContactsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Contact>>> GetContact()
     {
-        return await _context.Contact.ToListAsync();
+        return await _context.Contacts.ToListAsync();
     }
 
     // GET: api/Contact/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Contact>> GetContact(long id)
     {
-        var contact = await _context.Contact.FindAsync(id);
+        var contact = await _context.Contacts.FindAsync(id);
 
         if (contact == null)
         {
@@ -68,7 +67,7 @@ public class ContactsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Contact>> PostContact(Contact contact)
     {
-        _context.Contact.Add(contact);
+        _context.Contacts.Add(contact);
         await _context.SaveChangesAsync();
 
         return CreatedAtAction("GetContact", new { id = contact.Id }, contact);
@@ -78,13 +77,13 @@ public class ContactsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteContact(long? id)
     {
-        var contact = await _context.Contact.FindAsync(id);
+        var contact = await _context.Contacts.FindAsync(id);
         if (contact == null)
         {
             return NotFound();
         }
 
-        _context.Contact.Remove(contact);
+        _context.Contacts.Remove(contact);
         await _context.SaveChangesAsync();
 
         return NoContent();
@@ -92,6 +91,6 @@ public class ContactsController : ControllerBase
 
     private bool ContactExists(long? id)
     {
-        return _context.Contact.Any(e => e.Id == id);
+        return _context.Contacts.Any(e => e.Id == id);
     }
 }
