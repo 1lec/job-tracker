@@ -12,14 +12,14 @@ public class ContactsController : ControllerBase
         _context = context;
     }
 
-    // GET: api/Contact
+    // GET: api/contacts
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Contact>>> GetContact()
     {
         return await _context.Contacts.ToListAsync();
     }
 
-    // GET: api/Contact/5
+    // GET: api/contacts/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Contact>> GetContact(long id)
     {
@@ -33,7 +33,7 @@ public class ContactsController : ControllerBase
         return contact;
     }
 
-    // PUT: api/Contact/5 (update)
+    // PUT: api/contacts/5 (update)
     [HttpPut("{id}")]
     public async Task<IActionResult> PutContact(long? id, Contact contact)
     {
@@ -63,7 +63,7 @@ public class ContactsController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/Contact (Insert)
+    // POST: api/contacts (Insert)
     [HttpPost]
     public async Task<ActionResult<Contact>> PostContact(Contact contact)
     {
@@ -73,7 +73,7 @@ public class ContactsController : ControllerBase
         return CreatedAtAction("GetContact", new { id = contact.Id }, contact);
     }
 
-    // DELETE: api/Contact/5
+    // DELETE: api/contacts/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteContact(long? id)
     {
