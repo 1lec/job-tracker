@@ -5,7 +5,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import styles from '../styles/branding.module.css'; // Reuse contact styles
+import styles from '../styles/branding.module.css';
 
 export default function ContactPage() {
   const router = useRouter();
@@ -15,7 +15,7 @@ export default function ContactPage() {
   useEffect(() => {
     async function fetchContacts() {
       try {
-        const res = await fetch('https://localhost:7091/api/contacts'); // adjust to match your backend URL
+        const res = await fetch('https://localhost:7091/api/contacts');
         if (!res.ok) {
           throw new Error('Failed to fetch contacts');
         }
@@ -55,9 +55,9 @@ export default function ContactPage() {
             </tr>
           </thead>
           <tbody>
-            {contacts.map(({ id, name, company, email }) => (
+            {contacts.map(({ id, firstName, lastName, company, email }) => (
               <tr key={id}>
-                <td>{name}</td>
+                <td>{firstName + " " + lastName}</td>
                 <td>{company}</td>
                 <td>{email}</td>
                 <td>
