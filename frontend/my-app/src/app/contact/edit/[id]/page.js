@@ -1,3 +1,6 @@
+// This page was made with assistance from ChatGPT. About an hour of work was saved.
+// Thread: https://chatgpt.com/share/68292c72-1fd4-800a-8d99-dc8356fedd68
+
 // app/contact/edit/[id]/page.js
 'use client';
 

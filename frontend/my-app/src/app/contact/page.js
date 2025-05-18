@@ -1,5 +1,8 @@
 // used this to learn how to make tables https://www.geeksforgeeks.org/how-to-create-a-table-in-reactjs/
 
+// The fetch and delete functionalities were made with assistance from ChatGPT. It saved at least an hour of work.
+// Thread: https://chatgpt.com/share/68292fa4-dd68-800a-b573-48659bb2e2bc
+
 // app/contact/page.js
 'use client';
 
