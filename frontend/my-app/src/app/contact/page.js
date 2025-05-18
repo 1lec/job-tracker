@@ -47,6 +47,10 @@ export default function ContactPage() {
     }
   }
 
+  function handleEdit(id) {
+    router.push(`/contact/edit/${id}`);
+  }
+
   return (
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Contacts</h1>
@@ -77,7 +81,7 @@ export default function ContactPage() {
                 <td>{company}</td>
                 <td>{email}</td>
                 <td>
-                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }}>
+                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleEdit(id)}>
                     Edit
                   </button>
                   <button className={styles.cookedButton} onClick={() => handleDelete(id)}>
