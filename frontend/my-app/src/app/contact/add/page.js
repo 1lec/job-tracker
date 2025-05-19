@@ -11,7 +11,7 @@ export default function AddContactPage() {
   const [lastName, setLastName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
-  const userId = 1; // later we need to get the id of the user creating the contact
+  const userId = 1; // TODO: later we need to get the id of the user creating the contact
 
   const handleSubmit = async (e) => {
     e.preventDefault();
