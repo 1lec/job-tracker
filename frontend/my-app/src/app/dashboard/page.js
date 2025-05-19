@@ -1,46 +1,58 @@
 // app/dashboard/page.js
 'use client';
-// import { useRouter } from 'next/navigation';
+
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import Link from "next/link";
 import styles from './dashboard.module.css';
 
-const jobData = [
-  {
-    company: 'Microsoft',
-    title: 'Software Engineer',
-    status: 'Applied',
-    date: '1/1/2025',
-    skills: 'Java Script, React',
-    contact: 'John@gmail.com',
-  },
-  {
-    company: 'Apple',
-    title: 'Software Engineer',
-    status: 'Applied',
-    date: '1/1/2025',
-    skills: 'Python, SQL',
-    contact: 'Alex@gmail.com',
-  },
-  {
-    company: 'Snowflake',
-    title: 'Software Engineer',
-    status: 'Applied',
-    date: '1/1/2025',
-    skills: 'Java, Springboot',
-    contact: 'kelv@gmail.com',
-  },
-  {
-    company: 'Netflix',
-    title: 'Software Engineer',
-    status: 'Applied',
-    date: '1/1/2025',
-    skills: 'C#, .NET',
-    contact: 'josh@gmail.com',
-  },
-];
-
 export default function JobDashboard() {
-  // const router = useRouter()
+  const router = useRouter();
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        const res = await fetch('https://localhost:7091/api/jobs');
+        if (!res.ok) {
+          throw new Error('Failed to fetch jobs');
+        }
+        const data = await res.json();
+        setJobs(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchJobs();
+  }, []);
+
+  async function handleDelete(id) {
+    try {
+      const res = await fetch(`https://localhost:7091/api/jobs/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        throw new Error('Failed to delete job');
+      }
+      // Remove the deleted job from the state
+      setJobs((prevJobs) => prevJobs.filter(job => job.id !== id));
+    } catch (error) {
+      console.error(error);
+      alert('Error deleting job');
+    }
+  }
+
+  function handleEdit(id) {
+    router.push(`/job/edit/${id}`);
+  }
+
+  function handleAdd() {
+    router.push(`/job/add/`);
+  }
   
   return (
     <main className={styles.wrapper}>
@@ -55,65 +67,61 @@ export default function JobDashboard() {
 
           </div>
           <div className={styles.buttonRow}>
-            <button className={styles.buttonFunction} onClick={() => console.log("Do something (contacts)")}>
+            <button className={styles.buttonFunction} onClick={() => router.push('/contact')}>
               Contacts
             </button>
-            <button className={styles.buttonLink} onClick={() => console.log("Do something (Add a job)")}>
+            <button className={styles.buttonLink} onClick={() => handleAdd()}>
               Add Job
             </button>
         </div>
         
       </div>
 
-      <table className={styles.table}>
-        <thead>
-          <tr>
-            <th>Company</th>
-            <th>Title</th>
-            <th>Status</th>
-            <th>Applied Date</th>
-            <th>Skills</th>
-            <th>Contact</th>
-            <th>Cooked?</th>
-          </tr>
-        </thead>
-        <tbody>
-          {jobData.map((job, index) => (
-            <tr key={index}>
-              <td>{job.company}</td>
-              <td>{job.title}</td>
-              <td>{job.status}</td>
-              <td>{job.date}</td>
-              <td>{job.skills}</td>
-              <td>{job.contact}</td>
-              <td>
-                <button className={styles.cookedButton}>Am I cooked?</button>
-              </td>
+      {loading ? (
+        <p>Loading jobs...</p>
+      ) : (
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Company</th>
+              <th>Job Title</th>
+              <th>Status</th>
+              <th>Date Applied</th>
+              <th>Skills</th>
+              <th>Contact</th>
+              <th>Am I cooked?</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {jobs.map(({ id, companyName, jobTitle, dateApplied }) => (
+              <tr key={id}>
+                <td>{companyName}</td>
+                <td>{jobTitle}</td>
+                <td>Status</td>
+                <td>{dateApplied}</td>
+                <td>Skills</td>
+                <td>Contact</td>
+                <td>Am I cooked?</td>
+                <td>
+                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleEdit(id)}>
+                    Edit
+                  </button>
+                  <button className={styles.cookedButton} onClick={() => handleDelete(id)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
 
       <nav className={styles.ctas}>
         <Link href="/" className={styles.buttonFunction}>
           Back to Home
         </Link>
       </nav>
-
-      {/* <button
-        onClick={() => router.push('/')}
-        style={{
-          marginTop: '1rem',
-          padding: '0.5rem 1rem',
-          backgroundColor: '#0070f3',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '4px',
-          cursor: 'pointer'
-        }}
-      >
-        Back to Home
-      </button> */}
     </main>
   );
 }
