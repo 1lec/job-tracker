@@ -20,6 +20,6 @@ public class Contact
     public required long UserId { get; set; }
 
     // Navigation Properties (connects a Contact back to its specific User)
-    public required virtual User User { get; set; }
+    public virtual User? User { get; set; }
 }
 
