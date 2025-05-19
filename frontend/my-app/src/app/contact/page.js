@@ -54,12 +54,18 @@ export default function ContactPage() {
     router.push(`/contact/edit/${id}`);
   }
 
+  function handleAdd() {
+    router.push(`/contact/add/`);
+  }
+
   return (
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Contacts</h1>
 
       <div className={styles.buttonRow}>
-        <button className={styles.buttonFunction}>Add New Person</button>
+        <button className={styles.buttonFunction} onClick={() => handleAdd()}>
+          Add New Person
+        </button>
         <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home
         </button>
