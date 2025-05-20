@@ -9,7 +9,7 @@ namespace JobTracker.Backend.Models;
 public class Job
 {
     public long Id { get; set; }
-    public required string CompanyName { get; set; }
+    public required string Company { get; set; }
     public required string JobTitle { get; set; }
     public required DateOnly DateApplied { get; set; }
 
@@ -19,8 +19,8 @@ public class Job
     public long? ContactId { get; set; }
 
     // Navigation Properties
-    public required virtual User User { get; set; }
-    public required virtual Status Status { get; set; }
+    public virtual User? User { get; set; }
+    public virtual Status? Status { get; set; }
     public virtual Contact? Contact { get; set; }
 
     // Navigation Properties for M:M Relationships

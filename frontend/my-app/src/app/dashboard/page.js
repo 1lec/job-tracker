@@ -47,11 +47,11 @@ export default function JobDashboard() {
   }
 
   function handleEdit(id) {
-    router.push(`/job/edit/${id}`);
+    router.push(`/dashboard/edit/${id}`);
   }
 
   function handleAdd() {
-    router.push(`/job/add/`);
+    router.push(`/dashboard/add/`);
   }
   
   return (
@@ -94,9 +94,9 @@ export default function JobDashboard() {
             </tr>
           </thead>
           <tbody>
-            {jobs.map(({ id, companyName, jobTitle, dateApplied }) => (
+            {jobs.map(({ id, company, jobTitle, dateApplied }) => (
               <tr key={id}>
-                <td>{companyName}</td>
+                <td>{company}</td>
                 <td>{jobTitle}</td>
                 <td>Status</td>
                 <td>{dateApplied}</td>
