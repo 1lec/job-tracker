@@ -1,5 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using JobTracker.Backend.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,14 +23,31 @@ builder.Services.AddCors(options =>
 // Add controllers etc.
 builder.Services.AddControllers();
 
-// Add in-memory database for development purposes
 builder.Services.AddDbContext<JobTrackerContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-    //options.UseInMemoryDatabase("JobTrackerDb")); // This uses an in-memory database
-    
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Add Authentication and Authorization
+var jwtKey = builder.Configuration["Jwt:Key"] 
+    ?? throw new InvalidOperationException("JWT signing key is not configured.");
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -38,6 +59,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 // Use CORS with the defined policy
