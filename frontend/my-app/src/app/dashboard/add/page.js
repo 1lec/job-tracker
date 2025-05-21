@@ -2,7 +2,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../../styles/branding.module.css';
 
 export default function AddJobPage() {
@@ -13,6 +13,14 @@ export default function AddJobPage() {
   const userId = 1; // TODO: later we need to get the id of the user creating the job
   const statusId = 1; // TODO: later we need to get the id of the user creating the job
   const contactId = 10; // TODO: later we need to get the id of the user creating the job
+
+  useEffect(() => {
+    // Check if user has a token, and redirect to login screen if not
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

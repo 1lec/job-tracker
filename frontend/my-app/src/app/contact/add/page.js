@@ -2,7 +2,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../../styles/branding.module.css';
 
 export default function AddContactPage() {
@@ -12,6 +12,14 @@ export default function AddContactPage() {
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
   const userId = 1; // TODO: later we need to get the id of the user creating the contact
+
+  useEffect(() => {
+      // Check if user has a token, and redirect to login screen if not
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      }
+    }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

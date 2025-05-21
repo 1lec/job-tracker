@@ -2,11 +2,20 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import styles from '../styles/branding.module.css'; // Reuse contact styles
 import Image from "next/image";
 
 export default function ProfilePage() {
   const router = useRouter();
+
+  useEffect(() => {
+    // Check if user has a token, and redirect to login screen if not
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+  }, []);
 
   return (
     <main className={styles.wrapper}>

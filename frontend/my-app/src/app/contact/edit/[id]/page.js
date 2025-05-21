@@ -22,6 +22,12 @@ export default function EditContactPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user has a token, and redirect to login screen if not
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+    
     async function fetchContacts() {
       try {
         const res = await fetch(`https://localhost:7091/api/contacts/${id}`);

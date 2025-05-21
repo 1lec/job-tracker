@@ -20,6 +20,12 @@ export default function EditJobPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user has a token, and redirect to login screen if not
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+    
     async function fetchJobs() {
       try {
         const res = await fetch(`https://localhost:7091/api/jobs/${id}`);
