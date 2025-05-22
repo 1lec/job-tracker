@@ -1,3 +1,5 @@
+// 05/22/2025: Changes to incorporate JWT into the page's backend calls were modeled after changes to the analogous contact/page.js
+
 // app/dashboard/page.js
 'use client';
 

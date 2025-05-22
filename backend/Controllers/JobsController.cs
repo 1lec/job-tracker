@@ -1,3 +1,5 @@
+// 05/22/2025: Changes to incorporate JWT into this controller's methods were modeled after changes to the analogous ContactsController.cs
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
