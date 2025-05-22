@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using JobTracker.Backend.Models;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class ContactsController : ControllerBase
@@ -16,7 +19,22 @@ public class ContactsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Contact>>> GetContact()
     {
-        return await _context.Contacts.ToListAsync();
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
+        // Filter contacts by userId
+        var userContacts = await _context.Contacts
+            .Where(c => c.UserId == userId)
+            .ToListAsync();
+
+        return userContacts;
     }
 
     // GET: api/contacts/5

@@ -16,18 +16,40 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user has a token, and redirect to login screen if not
+    // Check if user has a token to see if they should be allowed to access this page
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
     }
     
     async function fetchContacts() {
+      // Check if the user still has a token, in case the token has expired or has been deleted
+      const token = localStorage.getItem('token');
+        if (!token) {
+          router.push('/login');
+          return;
+        }
+
       try {
-        const res = await fetch('https://localhost:7091/api/contacts');
+        const res = await fetch('https://localhost:7091/api/contacts', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+        // Catches database-related errors
         if (!res.ok) {
           throw new Error('Failed to fetch contacts');
         }
+
         const data = await res.json();
         setContacts(data);
       } catch (error) {
