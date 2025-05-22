@@ -84,8 +84,27 @@ public class JobsController : ControllerBase
 
     // POST: api/jobs (Insert)
     [HttpPost]
-    public async Task<ActionResult<Job>> PostJob(Job job)
+    public async Task<ActionResult<Job>> PostJob(CreateJobDto jobDto)
     {
+        // Extract userId from token received from frontend
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+        var userId = long.Parse(userIdClaim.Value);
+
+        // Use DTO and userId to create a complete Job object
+        var job = new Job
+        {
+            Company = jobDto.Company,
+            JobTitle = jobDto.JobTitle,
+            DateApplied = jobDto.DateApplied,
+            UserId = userId,
+            StatusId = jobDto.StatusId,
+            ContactId = jobDto.ContactId
+        };
+
         _context.Jobs.Add(job);
         await _context.SaveChangesAsync();
 

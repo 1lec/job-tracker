@@ -40,10 +40,10 @@ export default function AddContactPage() {
       });
 
       // Catches authorization errors
-        if (res.status === 401) {
-          router.push('/login');
-          return;
-        }
+      if (res.status === 401) {
+        router.push('/login');
+        return;
+      }
 
       // Catches database-related errors
       if (!res.ok) {

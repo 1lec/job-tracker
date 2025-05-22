@@ -134,8 +134,6 @@ public class ContactsController : ControllerBase
             UserId = userId
         };
 
-        contact.UserId = userId;
-
         _context.Contacts.Add(contact);
         await _context.SaveChangesAsync();
 
