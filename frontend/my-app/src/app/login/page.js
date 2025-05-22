@@ -26,6 +26,11 @@ export default function LoginPage() {
         throw new Error('Login failed');
       }
 
+      // Wait for, then store the JWT token from the backend
+      const data = await res.json();
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+
       // On success, navigate to the dashboard or home page
       router.push('/');
     } catch (err) {

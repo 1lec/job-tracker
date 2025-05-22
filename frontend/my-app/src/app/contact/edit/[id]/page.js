@@ -1,6 +1,9 @@
 // This page was made with assistance from ChatGPT. About an hour of work was saved.
 // Thread: https://chatgpt.com/share/68292c72-1fd4-800a-8d99-dc8356fedd68
 
+// 05/22/2025: Changes to incorporate JWT into the page's backend calls were made with assistance from ChatGPT, saving 30 minutes of work.
+// Thread: https://chatgpt.com/share/682f62d3-74b0-800a-b7ef-5e61b29beb36
+
 // app/contact/edit/[id]/page.js
 'use client';
 
@@ -17,14 +20,37 @@ export default function EditContactPage() {
     lastName: '',
     email: '',
     company: '',
-    userId: '',
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user has a token, and redirect to login screen if not
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+    
     async function fetchContacts() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      }
+    
       try {
-        const res = await fetch(`https://localhost:7091/api/contacts/${id}`);
+        const res = await fetch(`https://localhost:7091/api/contacts/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
         if (!res.ok) {
           throw new Error('Failed to fetch contacts');
         }
@@ -35,7 +61,6 @@ export default function EditContactPage() {
           lastName: data.lastName || '',
           email: data.email || '',
           company: data.company || '',
-          userId: data.userId || '',
         });
       } catch (error) {
         console.error(error);
@@ -55,20 +80,34 @@ export default function EditContactPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+
     try {
         const res = await fetch(`https://localhost:7091/api/contacts/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(formData),
         });
 
-        if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || 'Failed to update contact');
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
         }
 
-        // On success, redirect back to the contact list or detail page
-        router.push('/contact');
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(errorText || 'Failed to update contact');
+        }
+
+      // On success, redirect back to the contact list or detail page
+      router.push('/contact');
     } catch (err) {
         console.error('Update failed:', err.message);
         alert(`Error: ${err.message}`);
@@ -77,7 +116,7 @@ export default function EditContactPage() {
 
   return (
     <main className={styles.wrapper}>
-      <h1 className={styles.title}>Edit Contact ID {id}</h1>
+      <h1 className={styles.title}>Edit Contact</h1>
 
       {loading ? (
         <p>Loading contact edit form...</p>

@@ -5,6 +5,10 @@
 // minutes of work. Thread: https://chatgpt.com/share/681fc8b9-6a30-800a-8298-55d2415c502e
 
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using JobTracker.Backend.Models;
 using JobTracker.Backend.Models.Auth;
 
@@ -15,10 +19,12 @@ namespace JobTracker.Backend.Controllers
     public class AuthenticationController : ControllerBase
     {
         private readonly JobTrackerContext _context;
+        private readonly IConfiguration _configuration;
 
-        public AuthenticationController(JobTrackerContext context)
+        public AuthenticationController(JobTrackerContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpPost("signup")]
@@ -74,9 +80,34 @@ namespace JobTracker.Backend.Controllers
 
             Console.WriteLine($"User with email {request.Email} logged in successfully.");
 
+            // JWT token generation
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Email)
+            };
+
+            var jwtKey = _configuration["Jwt:Key"] 
+                ?? throw new InvalidOperationException("JWT signing key is not configured.");
+            
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddHours(1),
+                signingCredentials: creds
+            );
+
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+
+            // Return to client
             return Ok(new
             {
                 message = "Login successful.",
+                token = tokenString,
                 user = new
                 {
                     user.FirstName,

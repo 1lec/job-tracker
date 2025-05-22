@@ -3,6 +3,9 @@
 // The fetch and delete functionalities were made with assistance from ChatGPT. It saved at least an hour of work.
 // Thread: https://chatgpt.com/share/68292fa4-dd68-800a-b573-48659bb2e2bc
 
+// 05/22/2025: Changes to incorporate JWT into the page's backend calls were made with assistance from ChatGPT, saving 1-2 hours of work.
+// Thread: https://chatgpt.com/share/682f62d3-74b0-800a-b7ef-5e61b29beb36
+
 // app/contact/page.js
 'use client';
 
@@ -16,12 +19,40 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user has a token to see if they should be allowed to access this page
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+    
     async function fetchContacts() {
+      // Check if the user still has a token, in case the token has expired or has been deleted
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
       try {
-        const res = await fetch('https://localhost:7091/api/contacts');
+        const res = await fetch('https://localhost:7091/api/contacts', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+        // Catches database-related errors
         if (!res.ok) {
           throw new Error('Failed to fetch contacts');
         }
+
         const data = await res.json();
         setContacts(data);
       } catch (error) {
@@ -35,13 +66,32 @@ export default function ContactPage() {
   }, []);
 
   async function handleDelete(id) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
     try {
       const res = await fetch(`https://localhost:7091/api/contacts/${id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
       });
+
+      // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+      // Catches database-related errors
       if (!res.ok) {
         throw new Error('Failed to delete contact');
       }
+
       // Remove the deleted contact from the state
       setContacts((prevContacts) => prevContacts.filter(contact => contact.id !== id));
     } catch (error) {

@@ -1,7 +1,13 @@
+// 05/22/2025: Changes to incorporate JWT into this controller's methods were modeled after changes to the analogous ContactsController.cs
+
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using JobTracker.Backend.Models;
+using JobTracker.Backend.DTOs;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class JobsController : ControllerBase
@@ -16,16 +22,41 @@ public class JobsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Job>>> GetJob()
     {
-        return await _context.Jobs.ToListAsync();
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
+        // Filter jobs by userId
+        var userJobs = await _context.Jobs
+            .Where(c => c.UserId == userId)
+            .ToListAsync();
+
+        return userJobs;
     }
 
     // GET: api/jobs/5
     [HttpGet("{id}")]
     public async Task<ActionResult<Job>> GetJob(long id)
     {
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
         var job = await _context.Jobs.FindAsync(id);
 
-        if (job == null)
+        if (job == null || job.UserId != userId)
         {
             return NotFound();
         }
@@ -35,15 +66,35 @@ public class JobsController : ControllerBase
 
     // PUT: api/jobs/5 (update)
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutJob(long? id, Job job)
+    public async Task<IActionResult> PutJob(long? id, EditJobDto jobDto)
     {
-        if (id != job.Id)
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
         {
-            return BadRequest();
+            return Unauthorized();
         }
 
-        _context.Entry(job).State = EntityState.Modified;
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
 
+        // Use the Id for the job and the userId from the token to fetch the job itself
+        var job = await _context.Jobs
+            .FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+
+        if (job == null)
+        {
+            return NotFound("Job not found or you don't have access to it");
+        }
+
+        // Make updates to the fetched job
+        job.Company = jobDto.Company;
+        job.JobTitle = jobDto.JobTitle;
+        job.DateApplied = jobDto.DateApplied;
+        job.StatusId = jobDto.StatusId;
+        job.ContactId = jobDto.ContactId;
+
+        // Save changes to the job
         try
         {
             await _context.SaveChangesAsync();
@@ -65,8 +116,27 @@ public class JobsController : ControllerBase
 
     // POST: api/jobs (Insert)
     [HttpPost]
-    public async Task<ActionResult<Job>> PostJob(Job job)
+    public async Task<ActionResult<Job>> PostJob(CreateJobDto jobDto)
     {
+        // Extract userId from token received from frontend
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+        var userId = long.Parse(userIdClaim.Value);
+
+        // Use DTO and userId to create a complete Job object
+        var job = new Job
+        {
+            Company = jobDto.Company,
+            JobTitle = jobDto.JobTitle,
+            DateApplied = jobDto.DateApplied,
+            UserId = userId,
+            StatusId = jobDto.StatusId,
+            ContactId = jobDto.ContactId
+        };
+
         _context.Jobs.Add(job);
         await _context.SaveChangesAsync();
 
@@ -77,7 +147,20 @@ public class JobsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteJob(long? id)
     {
-        var job = await _context.Jobs.FindAsync(id);
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
+        var job = await _context.Jobs
+            .Where(c => c.Id == id && c.UserId == userId)
+            .FirstOrDefaultAsync();
+
         if (job == null)
         {
             return NotFound();

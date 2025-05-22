@@ -1,3 +1,5 @@
+// 05/22/2025: Changes to incorporate JWT into the page's backend calls were modeled after changes to the analogous contact/page.js
+
 // app/dashboard/page.js
 'use client';
 
@@ -12,9 +14,35 @@ export default function JobDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Check if user has a token, and redirect to login screen if not
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+
     async function fetchJobs() {
+      // Check if the user still has a token, in case the token has expired or has been deleted
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
       try {
-        const res = await fetch('https://localhost:7091/api/jobs');
+        const res = await fetch('https://localhost:7091/api/jobs', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
         if (!res.ok) {
           throw new Error('Failed to fetch jobs');
         }
@@ -31,13 +59,32 @@ export default function JobDashboard() {
   }, []);
 
   async function handleDelete(id) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
     try {
       const res = await fetch(`https://localhost:7091/api/jobs/${id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
       });
+
+      // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+      // Catches database-related errors
       if (!res.ok) {
         throw new Error('Failed to delete job');
       }
+
       // Remove the deleted job from the state
       setJobs((prevJobs) => prevJobs.filter(job => job.id !== id));
     } catch (error) {

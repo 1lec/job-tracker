@@ -1,8 +1,11 @@
+// 05/22/2025: Changes to incorporate JWT into the page's backend calls were made with assistance from ChatGPT, saving 30 minutes of work.
+// Thread: https://chatgpt.com/share/682f62d3-74b0-800a-b7ef-5e61b29beb36
+
 // app/contact/add/page.js
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from '../../styles/branding.module.css';
 
 export default function AddContactPage() {
@@ -11,30 +14,53 @@ export default function AddContactPage() {
   const [lastName, setLastName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
-  const userId = 1; // TODO: later we need to get the id of the user creating the contact
+
+  useEffect(() => {
+      // Check if user has a token, and redirect to login screen if not
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      }
+    }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-        const res = await fetch(`https://localhost:7091/api/contacts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({firstName, lastName, company, email, userId}),
-        });
+      // Check if user has a token, and redirect to login screen if not
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      }
 
-        if (!res.ok) {
+      const res = await fetch(`https://localhost:7091/api/contacts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({firstName, lastName, company, email}),
+      });
+
+      // Catches authorization errors
+      if (res.status === 401) {
+        router.push('/login');
+        return;
+      }
+
+      // Catches database-related errors
+      if (!res.ok) {
         const errorText = await res.text();
         throw new Error(errorText || 'Failed to add contact');
-        }
+      }
 
-        // On success, redirect back to the contact list or detail page
-        router.push('/contact');
+      // On success, redirect back to the contact list or detail page
+      router.push('/contact');
     } catch (err) {
         console.error('Add failed:', err.message);
         alert(`Error: ${err.message}`);
     }
-    };
+  };
 
   return (
     <main className={styles.wrapper}>
