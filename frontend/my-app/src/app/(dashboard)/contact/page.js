@@ -8,7 +8,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import styles from '../styles/branding.module.css';
+import styles from '../../styles/branding.module.css';
 
 export default function ContactPage() {
   const router = useRouter();
@@ -66,9 +66,9 @@ export default function ContactPage() {
         <button className={styles.buttonFunction} onClick={() => handleAdd()}>
           Add New Person
         </button>
-        <button className={styles.buttonFunction} onClick={() => router.push('/')}>
+        {/* <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home
-        </button>
+        </button> */}
       </div>
 
       {loading ? (

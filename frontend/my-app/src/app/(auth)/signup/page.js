@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import styles from '../styles/branding.module.css';
+import styles from '../../styles/branding.module.css';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -111,9 +111,9 @@ export default function SignupPage() {
       </form>
 
       <div className={styles.buttonRow}>
-        <button className={styles.buttonFunction} onClick={() => router.push('/')}>
+        {/* <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home
-        </button>
+        </button> */}
       </div>
     </main>
   );

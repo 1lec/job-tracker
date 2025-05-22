@@ -36,9 +36,9 @@ export default function Header() {
           </h1> 
         </div>
       </Link>
-      <nav style={{ display: "flex", gap: "1.5rem" }}>
-        <Link href="/dashboard">Dashboard</Link>
-        <Link href="/profile">Profile</Link>
+      <nav style={{ display: "flex", gap: "1.5rem", paddingInline: "1rem" }}>
+        <Link href="/signup">Signup</Link>
+        <Link href="/login">Login</Link>
       </nav>
     </header>
   );

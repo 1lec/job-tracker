@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import styles from '../styles/branding.module.css'; // Reuse contact styles
+import styles from '../../styles/branding.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -88,9 +88,9 @@ export default function LoginPage() {
         <button className={styles.buttonFunction} onClick={() => router.push('/signup')}>
           Signup
         </button>
-        <button className={styles.buttonFunction} onClick={() => router.push('/')}>
+        {/* <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home
-        </button>
+        </button> */}
       </div>
     </main>
   );

@@ -19,23 +19,21 @@ export default function Home() {
         </div>
 
         <h1 className={styles.title} style={{color: "var(--beaverOrange"}}>ur COOKED job tracker</h1>
-    
-        <ol>
+        <h2> CS467 Capstone Project Introduction</h2>
+        <ul>
           <li>
-          Job Tracker Application (CS467) — your streamlined tool for managing job applications, tracking progress, and staying organized.
+            Your streamlined tool for managing job applications, tracking progress, and staying organized.
           </li>
           <li>
-            Get a job and navigate through the tabs <code>dashboard • contact • profile</code>.
+            Use the tabs to navigate: <code>dashboard • contact • profile</code>
           </li>
-          <li>Best of luck!</li>
-        </ol>
+          <li>
+            Stay focused, stay organized—<strong>you MAYBE got this!</strong>
+          </li>
+        </ul>
 
-        <nav className={styles.ctas}>
-          <Link className={styles.buttonFunction} href="/dashboard">Dashboard</Link>
-          <Link className={styles.buttonFunction} href="/profile">Profile</Link>
-          <Link className={styles.buttonFunction} href="/contact">Contact</Link>
-          <Link className={styles.buttonLink} href="/signup">Signup</Link>
-          <Link className={styles.buttonLink} href="/login">Login</Link>
+        <nav className={styles.ctas} style={{ display: 'flex', justifyContent: 'center' }}>
+          <Link className={styles.buttonFunction} href="/dashboard">Head to dashboard demo</Link>
         </nav>
 
         {/* <div className={styles.ctas}>

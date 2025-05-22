@@ -2,7 +2,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import styles from '../styles/branding.module.css'; // Reuse contact styles
+import styles from '../../styles/branding.module.css'; // Reuse contact styles
 import Image from "next/image";
 
 export default function ProfilePage() {
@@ -54,9 +54,9 @@ export default function ProfilePage() {
           Edit Profile
         </button>
 
-        <button className={styles.buttonFunction} onClick={() => router.push('/')}>
+        {/* <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home
-        </button>
+        </button> */}
       </div>
     </main>
   );

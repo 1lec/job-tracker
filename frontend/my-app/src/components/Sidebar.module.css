@@ -1,0 +1,38 @@
+.sidebar {
+  margin-top: 50px;
+  width: 250px;
+  height: 100vh;
+  background-color: #1a1a1a;
+  border-right: 1px solid rgb(87, 87, 87);
+  padding: 2rem 1rem;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.navLink {
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  color: var(--text);
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.navLink:hover {
+  background-color: var(--hover);
+}
+
+.active {
+  background-color: var(--beaverOrange);
+  color: white;
+}
+
+.active:hover {
+  background-color: var(--beaverOrange);
+}

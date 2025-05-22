@@ -3,7 +3,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import styles from '../../styles/branding.module.css';
+import styles from '../../../styles/branding.module.css';
 
 export default function AddContactPage() {
   const router = useRouter();
