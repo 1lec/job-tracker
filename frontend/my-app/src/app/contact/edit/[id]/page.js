@@ -42,6 +42,12 @@ export default function EditContactPage() {
           }
         });
 
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
         if (!res.ok) {
           throw new Error('Failed to fetch contacts');
         }

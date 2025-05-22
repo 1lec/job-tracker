@@ -42,9 +42,19 @@ public class JobsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Job>> GetJob(long id)
     {
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
         var job = await _context.Jobs.FindAsync(id);
 
-        if (job == null)
+        if (job == null || job.UserId != userId)
         {
             return NotFound();
         }

@@ -27,11 +27,30 @@ export default function EditJobPage() {
     }
     
     async function fetchJobs() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      }
+
       try {
-        const res = await fetch(`https://localhost:7091/api/jobs/${id}`);
+        const res = await fetch(`https://localhost:7091/api/jobs/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
         if (!res.ok) {
           throw new Error('Failed to fetch job');
         }
+        
         const data = await res.json();
         setFormData({
           id: data.id || '',
