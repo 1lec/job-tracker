@@ -11,7 +11,6 @@ export default function AddContactPage() {
   const [lastName, setLastName] = useState('');
   const [company, setCompany] = useState('');
   const [email, setEmail] = useState('');
-  const userId = 1; // TODO: later we need to get the id of the user creating the contact
 
   useEffect(() => {
       // Check if user has a token, and redirect to login screen if not
@@ -25,24 +24,40 @@ export default function AddContactPage() {
     e.preventDefault();
 
     try {
-        const res = await fetch(`https://localhost:7091/api/contacts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({firstName, lastName, company, email, userId}),
-        });
+      // Check if user has a token, and redirect to login screen if not
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      }
 
-        if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || 'Failed to add contact');
+      const res = await fetch(`https://localhost:7091/api/contacts`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({firstName, lastName, company, email}),
+      });
+
+      // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
         }
 
-        // On success, redirect back to the contact list or detail page
-        router.push('/contact');
+      // Catches database-related errors
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(errorText || 'Failed to add contact');
+      }
+
+      // On success, redirect back to the contact list or detail page
+      router.push('/contact');
     } catch (err) {
         console.error('Add failed:', err.message);
         alert(`Error: ${err.message}`);
     }
-    };
+  };
 
   return (
     <main className={styles.wrapper}>

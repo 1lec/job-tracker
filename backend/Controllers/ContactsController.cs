@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using JobTracker.Backend.Models;
+using JobTracker.Backend.DTOs;
 
 [Authorize]
 [Route("api/[controller]")]
@@ -83,8 +84,28 @@ public class ContactsController : ControllerBase
 
     // POST: api/contacts (Insert)
     [HttpPost]
-    public async Task<ActionResult<Contact>> PostContact(Contact contact)
+    public async Task<IActionResult> PostContact(CreateContactDto contactDto)
     {
+        // Extract userId from token received from frontend
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+        var userId = long.Parse(userIdClaim.Value);
+
+        // Use DTO and userId to create a complete Contact object
+        var contact = new Contact
+        {
+            FirstName = contactDto.FirstName, 
+            LastName = contactDto.LastName, 
+            Email = contactDto.Email, 
+            Company = contactDto.Company, 
+            UserId = userId
+        };
+
+        contact.UserId = userId;
+
         _context.Contacts.Add(contact);
         await _context.SaveChangesAsync();
 
