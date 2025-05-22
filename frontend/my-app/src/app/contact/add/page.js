@@ -1,3 +1,6 @@
+// 05/22/2025: Changes to incorporate JWT into the page's backend calls were made with assistance from ChatGPT, saving 30 minutes of work.
+// Thread: https://chatgpt.com/share/682f62d3-74b0-800a-b7ef-5e61b29beb36
+
 // app/contact/add/page.js
 'use client';
 

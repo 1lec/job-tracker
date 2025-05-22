@@ -1,3 +1,6 @@
+// 05/22/2025 Changes to incorporate JWT into the controller's methods were made with assistance from ChatGPT, saving 1-2 hours of work.
+// Thread: https://chatgpt.com/share/682f62d3-74b0-800a-b7ef-5e61b29beb36
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;

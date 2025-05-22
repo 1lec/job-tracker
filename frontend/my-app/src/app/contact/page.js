@@ -3,6 +3,9 @@
 // The fetch and delete functionalities were made with assistance from ChatGPT. It saved at least an hour of work.
 // Thread: https://chatgpt.com/share/68292fa4-dd68-800a-b573-48659bb2e2bc
 
+// 05/22/2025: Changes to incorporate JWT into the page's backend calls were made with assistance from ChatGPT, saving 1-2 hours of work.
+// Thread: https://chatgpt.com/share/682f62d3-74b0-800a-b7ef-5e61b29beb36
+
 // app/contact/page.js
 'use client';
 
