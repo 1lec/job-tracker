@@ -88,9 +88,9 @@ export default function LoginPage() {
         <button className={styles.buttonFunction} onClick={() => router.push('/signup')}>
           Signup
         </button>
-        {/* <button className={styles.buttonFunction} onClick={() => router.push('/')}>
+        <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home
-        </button> */}
+        </button>
       </div>
     </main>
   );

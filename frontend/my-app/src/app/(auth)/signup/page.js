@@ -111,9 +111,9 @@ export default function SignupPage() {
       </form>
 
       <div className={styles.buttonRow}>
-        {/* <button className={styles.buttonFunction} onClick={() => router.push('/')}>
+        <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home
-        </button> */}
+        </button>
       </div>
     </main>
   );
