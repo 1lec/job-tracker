@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using JobTracker.Backend.Models;
+using JobTracker.Backend.DTOs;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class JobsController : ControllerBase
@@ -16,7 +20,22 @@ public class JobsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Job>>> GetJob()
     {
-        return await _context.Jobs.ToListAsync();
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
+        // Filter jobs by userId
+        var userJobs = await _context.Jobs
+            .Where(c => c.UserId == userId)
+            .ToListAsync();
+
+        return userJobs;
     }
 
     // GET: api/jobs/5

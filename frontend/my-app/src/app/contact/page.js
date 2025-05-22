@@ -25,10 +25,10 @@ export default function ContactPage() {
     async function fetchContacts() {
       // Check if the user still has a token, in case the token has expired or has been deleted
       const token = localStorage.getItem('token');
-        if (!token) {
-          router.push('/login');
-          return;
-        }
+      if (!token) {
+        router.push('/login');
+        return;
+      }
 
       try {
         const res = await fetch('https://localhost:7091/api/contacts', {

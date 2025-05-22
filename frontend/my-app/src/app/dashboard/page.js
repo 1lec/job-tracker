@@ -19,8 +19,28 @@ export default function JobDashboard() {
     }
 
     async function fetchJobs() {
+      // Check if the user still has a token, in case the token has expired or has been deleted
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
       try {
-        const res = await fetch('https://localhost:7091/api/jobs');
+        const res = await fetch('https://localhost:7091/api/jobs', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+        
         if (!res.ok) {
           throw new Error('Failed to fetch jobs');
         }
