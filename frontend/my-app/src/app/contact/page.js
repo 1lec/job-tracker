@@ -64,10 +64,10 @@ export default function ContactPage() {
 
   async function handleDelete(id) {
     const token = localStorage.getItem('token');
-        if (!token) {
-          router.push('/login');
-          return;
-        }
+    if (!token) {
+      router.push('/login');
+      return;
+    }
 
     try {
       const res = await fetch(`https://localhost:7091/api/contacts/${id}`, {

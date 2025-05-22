@@ -40,7 +40,7 @@ export default function JobDashboard() {
           router.push('/login');
           return;
         }
-        
+
         if (!res.ok) {
           throw new Error('Failed to fetch jobs');
         }
@@ -57,13 +57,32 @@ export default function JobDashboard() {
   }, []);
 
   async function handleDelete(id) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
     try {
       const res = await fetch(`https://localhost:7091/api/jobs/${id}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
       });
+
+      // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+      // Catches database-related errors
       if (!res.ok) {
         throw new Error('Failed to delete job');
       }
+
       // Remove the deleted job from the state
       setJobs((prevJobs) => prevJobs.filter(job => job.id !== id));
     } catch (error) {

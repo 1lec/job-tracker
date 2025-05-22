@@ -96,7 +96,20 @@ public class JobsController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteJob(long? id)
     {
-        var job = await _context.Jobs.FindAsync(id);
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
+        var job = await _context.Jobs
+            .Where(c => c.Id == id && c.UserId == userId)
+            .FirstOrDefaultAsync();
+
         if (job == null)
         {
             return NotFound();
