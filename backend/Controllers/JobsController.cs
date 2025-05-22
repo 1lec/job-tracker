@@ -64,15 +64,35 @@ public class JobsController : ControllerBase
 
     // PUT: api/jobs/5 (update)
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutJob(long? id, Job job)
+    public async Task<IActionResult> PutJob(long? id, EditJobDto jobDto)
     {
-        if (id != job.Id)
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
         {
-            return BadRequest();
+            return Unauthorized();
         }
 
-        _context.Entry(job).State = EntityState.Modified;
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
 
+        // Use the Id for the job and the userId from the token to fetch the job itself
+        var job = await _context.Jobs
+            .FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+
+        if (job == null)
+        {
+            return NotFound("Job not found or you don't have access to it");
+        }
+
+        // Make updates to the fetched job
+        job.Company = jobDto.Company;
+        job.JobTitle = jobDto.JobTitle;
+        job.DateApplied = jobDto.DateApplied;
+        job.StatusId = jobDto.StatusId;
+        job.ContactId = jobDto.ContactId;
+
+        // Save changes to the job
         try
         {
             await _context.SaveChangesAsync();

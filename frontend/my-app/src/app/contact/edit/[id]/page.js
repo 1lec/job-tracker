@@ -92,13 +92,19 @@ export default function EditContactPage() {
         body: JSON.stringify(formData),
         });
 
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
         if (!res.ok) {
           const errorText = await res.text();
           throw new Error(errorText || 'Failed to update contact');
         }
 
-        // On success, redirect back to the contact list or detail page
-        router.push('/contact');
+      // On success, redirect back to the contact list or detail page
+      router.push('/contact');
     } catch (err) {
         console.error('Update failed:', err.message);
         alert(`Error: ${err.message}`);
@@ -107,7 +113,7 @@ export default function EditContactPage() {
 
   return (
     <main className={styles.wrapper}>
-      <h1 className={styles.title}>Edit Contact ID {id}</h1>
+      <h1 className={styles.title}>Edit Contact</h1>
 
       {loading ? (
         <p>Loading contact edit form...</p>
