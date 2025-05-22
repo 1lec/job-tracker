@@ -42,9 +42,20 @@ public class ContactsController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Contact>> GetContact(long id)
     {
-        var contact = await _context.Contacts.FindAsync(id);
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
 
-        if (contact == null)
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
+        var contact = await _context.Contacts
+            .FindAsync(id);
+
+        if (contact == null || contact.UserId != userId)
         {
             return NotFound();
         }
@@ -54,15 +65,34 @@ public class ContactsController : ControllerBase
 
     // PUT: api/contacts/5 (update)
     [HttpPut("{id}")]
-    public async Task<IActionResult> PutContact(long? id, Contact contact)
+    public async Task<IActionResult> PutContact(long? id, EditContactDto contactDto)
     {
-        if (id != contact.Id)
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
         {
-            return BadRequest();
+            return Unauthorized();
         }
 
-        _context.Entry(contact).State = EntityState.Modified;
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
 
+        // Use the Id for the contact and the userId from the token to fetch the contact itself
+        var contact = await _context.Contacts
+            .FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
+
+        if (contact == null)
+        {
+            return NotFound("Contact not found or you don't have access to it");
+        }
+
+        // Make updates to the fetched contact
+        contact.FirstName = contactDto.FirstName;
+        contact.LastName = contactDto.LastName;
+        contact.Email = contactDto.Email;
+        contact.Company = contactDto.Company;
+
+        // Save the changes to the contact
         try
         {
             await _context.SaveChangesAsync();

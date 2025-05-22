@@ -17,7 +17,6 @@ export default function EditContactPage() {
     lastName: '',
     email: '',
     company: '',
-    userId: '',
   });
   const [loading, setLoading] = useState(true);
 
@@ -29,8 +28,20 @@ export default function EditContactPage() {
     }
     
     async function fetchContacts() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+      }
+    
       try {
-        const res = await fetch(`https://localhost:7091/api/contacts/${id}`);
+        const res = await fetch(`https://localhost:7091/api/contacts/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
         if (!res.ok) {
           throw new Error('Failed to fetch contacts');
         }
@@ -41,7 +52,6 @@ export default function EditContactPage() {
           lastName: data.lastName || '',
           email: data.email || '',
           company: data.company || '',
-          userId: data.userId || '',
         });
       } catch (error) {
         console.error(error);
@@ -61,16 +71,24 @@ export default function EditContactPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+    }
+
     try {
         const res = await fetch(`https://localhost:7091/api/contacts/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(formData),
         });
 
         if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(errorText || 'Failed to update contact');
+          const errorText = await res.text();
+          throw new Error(errorText || 'Failed to update contact');
         }
 
         // On success, redirect back to the contact list or detail page
