@@ -62,6 +62,10 @@ export default function ProfilePage() {
     fetchUser();
   }, []);
 
+  function handleEdit() {
+    router.push(`/profile/edit/`);
+  }
+
   return (
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Profile Page</h1>
@@ -85,7 +89,7 @@ export default function ProfilePage() {
       )}
 
       <div className={styles.buttonRow}>
-        <button className={styles.buttonFunction}>
+        <button className={styles.buttonFunction} onClick={() => handleEdit()}>
           Edit Profile
         </button>
 

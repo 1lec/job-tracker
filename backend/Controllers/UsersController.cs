@@ -50,10 +50,20 @@ public class UsersController : ControllerBase
         return userDto;
     }
 
-    // PUT: api/users/5 (update)
+    // PUT: api/users (update)
     [HttpPut("{id}")]
     public async Task<IActionResult> PutUser(long? id, User user)
     {
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
+
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+        
         if (id != user.Id)
         {
             return BadRequest();
