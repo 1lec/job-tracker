@@ -12,8 +12,11 @@ export default function AddJobPage() {
   const [company, setCompany] = useState('');
   const [jobTitle, setJobTitle] = useState('');
   const [dateApplied, setDateApplied] = useState('');
-  const statusId = 1; // TODO: later we need to get the id of the user creating the job
+  const [statusId, setStatusId] = useState('');
   const contactId = 10; // TODO: later we need to get the id of the user creating the job
+
+  const [statuses, setStatuses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // Check if user has a token, and redirect to login screen if not
@@ -21,6 +24,45 @@ export default function AddJobPage() {
     if (!token) {
       router.push('/login');
     }
+
+    async function fetchStatuses() {
+      // Check if the user still has a token, in case the token has expired or has been deleted
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      try {
+        const res = await fetch('https://localhost:7091/api/statuses', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+        // Catches database-related errors
+        if (!res.ok) {
+          throw new Error('Failed to fetch statuses');
+        }
+
+        const data = await res.json();
+        setStatuses(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStatuses();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -64,33 +106,51 @@ export default function AddJobPage() {
   return (
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Add Job</h1>
-      <form onSubmit={handleSubmit}>
-          <label htmlFor="company">Company:</label><br />
-          <input
-            type="text"
-            name="company"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-          /><br />
 
-          <label htmlFor="jobTitle">Job Title:</label><br />
-          <input
-            type="text"
-            name="jobTitle"
-            value={jobTitle}
-            onChange={(e) => setJobTitle(e.target.value)}
-          /><br />
+      {loading ? (
+        <p>Loading job form...</p>
+      ) : (
+        <><form onSubmit={handleSubmit}>
+            <label htmlFor="company">Company:</label><br />
+            <input
+              type="text"
+              name="company"
+              value={company}
+              onChange={(e) => setCompany(e.target.value)}
+            /><br />
 
-          <label htmlFor="dateApplied">Date Applied:</label><br />
-          <input
-            type="date"
-            name="dateApplied"
-            value={dateApplied}
-            onChange={(e) => setDateApplied(e.target.value)}
-          /><br />
+            <label htmlFor="jobTitle">Job Title:</label><br />
+            <input
+              type="text"
+              name="jobTitle"
+              value={jobTitle}
+              onChange={(e) => setJobTitle(e.target.value)}
+            /><br />
 
-          <input type="submit" value="Add Job" />
-        </form><br></br>
+            <label htmlFor="dateApplied">Date Applied:</label><br />
+            <input
+              type="date"
+              name="dateApplied"
+              value={dateApplied}
+              onChange={(e) => setDateApplied(e.target.value)}
+            /><br />
+
+            <label htmlFor="statusId">Status:</label><br />
+            <select
+              name="statusId"
+              value={statusId}
+              onChange={(e) => setStatusId(parseInt(e.target.value))}
+            >
+              {statuses.map((status) => (
+                <option key={status.id} value={status.id}>
+                  {status.name}
+                </option>
+              ))}
+            </select><br />
+
+            <input type="submit" value="Add Job" />
+          </form><br></br></>
+      )}
     </main>
   );
 }
