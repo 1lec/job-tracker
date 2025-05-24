@@ -51,8 +51,8 @@ public class UsersController : ControllerBase
     }
 
     // PUT: api/users (update)
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutUser(long? id, User user)
+    [HttpPut]
+    public async Task<IActionResult> PutUser(UserDto userDto)
     {
         // Get the userId from the JWT claims
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -63,21 +63,29 @@ public class UsersController : ControllerBase
 
         // Convert string userId from token into a long, which matches the userId type in database
         var userId = long.Parse(userIdClaim.Value);
-        
-        if (id != user.Id)
+
+        // Search for 
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
         {
-            return BadRequest();
+            return NotFound("User not found or you don't have access to it");
         }
 
-        _context.Entry(user).State = EntityState.Modified;
+        // Make updates to the fetched user
+        user.FirstName = userDto.FirstName;
+        user.LastName = userDto.LastName;
+        user.Email = userDto.Email;
 
+        // Save the changes to the profile
         try
         {
             await _context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!UserExists(id))
+            if (!UserExists(userId))
             {
                 return NotFound();
             }
