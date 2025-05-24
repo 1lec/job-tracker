@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using JobTracker.Backend.Models;
+using JobTracker.Backend.DTOs;
 
+[Authorize]
 [Route("api/[controller]")]
 [ApiController]
 public class UsersController : ControllerBase
@@ -12,45 +16,76 @@ public class UsersController : ControllerBase
         _context = context;
     }
 
-    // GET: api/User
+    // GET: api/users
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUser()
+    public async Task<ActionResult<UserDto>> GetUser()
     {
-        return await _context.Users.ToListAsync();
-    }
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
+        {
+            return Unauthorized();
+        }
 
-    // GET: api/User/5
-    [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(long id)
-    {
-        var user = await _context.Users.FindAsync(id);
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
+
+        var user = await _context.Users
+            .FindAsync(userId);
 
         if (user == null)
         {
             return NotFound();
         }
 
-        return user;
+        // Transfers information to a DTO so that the user password isn't sent to the frontend
+        var userDto = new UserDto
+        {
+            Id = user.Id,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            Email = user.Email
+        };
+
+        return userDto;
     }
 
-    // PUT: api/User/5 (update)
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutUser(long? id, User user)
+    // PUT: api/users (update)
+    [HttpPut]
+    public async Task<IActionResult> PutUser(UserDto userDto)
     {
-        if (id != user.Id)
+        // Get the userId from the JWT claims
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+        if (userIdClaim == null)
         {
-            return BadRequest();
+            return Unauthorized();
         }
 
-        _context.Entry(user).State = EntityState.Modified;
+        // Convert string userId from token into a long, which matches the userId type in database
+        var userId = long.Parse(userIdClaim.Value);
 
+        // Search for 
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Id == userId);
+
+        if (user == null)
+        {
+            return NotFound("User not found or you don't have access to it");
+        }
+
+        // Make updates to the fetched user
+        user.FirstName = userDto.FirstName;
+        user.LastName = userDto.LastName;
+        user.Email = userDto.Email;
+
+        // Save the changes to the profile
         try
         {
             await _context.SaveChangesAsync();
         }
         catch (DbUpdateConcurrencyException)
         {
-            if (!UserExists(id))
+            if (!UserExists(userId))
             {
                 return NotFound();
             }
@@ -63,7 +98,7 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    // POST: api/User (Insert)
+    // POST: api/users (Insert)
     [HttpPost]
     public async Task<ActionResult<User>> PostUser(User user)
     {
@@ -73,7 +108,7 @@ public class UsersController : ControllerBase
         return CreatedAtAction("GetUser", new { id = user.Id }, user);
     }
 
-    // DELETE: api/User/5
+    // DELETE: api/users/5
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUser(long? id)
     {
