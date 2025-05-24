@@ -141,11 +141,11 @@ export default function JobDashboard() {
             </tr>
           </thead>
           <tbody>
-            {jobs.map(({ id, company, jobTitle, dateApplied }) => (
+            {jobs.map(({ id, company, jobTitle, dateApplied, status }) => (
               <tr key={id}>
                 <td>{company}</td>
                 <td>{jobTitle}</td>
-                <td>Status</td>
+                <td>{status}</td>
                 <td>{dateApplied}</td>
                 <td>Skills</td>
                 <td>Contact</td>

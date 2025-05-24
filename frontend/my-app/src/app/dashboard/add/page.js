@@ -1,4 +1,6 @@
 // 05/22/2025: Changes to incorporate JWT into the page's backend calls were modeled after changes to the analogous contact/add/page.js
+// 05/24/2025: Dropdown for statuses was madde with help from ChatGPT, saving an hour of work.
+// Thread: https://chatgpt.com/share/68323fa7-9124-800a-863f-94f53e27e1a2
 
 // app/dashboard/add/page.js
 'use client';

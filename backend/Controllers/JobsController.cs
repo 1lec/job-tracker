@@ -1,4 +1,6 @@
 // 05/22/2025: Changes to incorporate JWT into this controller's methods were modeled after changes to the analogous ContactsController.cs
+// 05/24/2025: Modifications to LINQ query to obtain a list of jobs made with help from ChatGPT, saving 30 minutes of work.
+// Thread: https://chatgpt.com/share/68323fa7-9124-800a-863f-94f53e27e1a2
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +22,7 @@ public class JobsController : ControllerBase
 
     // GET: api/jobs
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Job>>> GetJob()
+    public async Task<ActionResult<IEnumerable<JobWithStatusNameDto>>> GetJob()
     {
         // Get the userId from the JWT claims
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -34,7 +36,17 @@ public class JobsController : ControllerBase
 
         // Filter jobs by userId
         var userJobs = await _context.Jobs
-            .Where(c => c.UserId == userId)
+            .Where(j => j.UserId == userId)
+            .Include(j => j.Status)
+            .Select(j => new JobWithStatusNameDto
+            {
+                Id = j.Id,
+                Company = j.Company,
+                JobTitle = j.JobTitle,
+                DateApplied = j.DateApplied,
+                Status = j.Status!.Name,
+                ContactId = j.ContactId
+            })
             .ToListAsync();
 
         return userJobs;
