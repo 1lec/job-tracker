@@ -19,6 +19,8 @@ export default function EditJobPage() {
     statusId: '',
     contactId: '',
   });
+
+  const [statuses, setStatuses] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,6 +28,43 @@ export default function EditJobPage() {
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
+    }
+
+    async function fetchStatuses() {
+      // Check if the user still has a token, in case the token has expired or has been deleted
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      try {
+        const res = await fetch('https://localhost:7091/api/statuses', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+        // Catches database-related errors
+        if (!res.ok) {
+          throw new Error('Failed to fetch statuses');
+        }
+
+        const data = await res.json();
+        setStatuses(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     }
     
     async function fetchJobs() {
@@ -71,6 +110,7 @@ export default function EditJobPage() {
     }
 
     fetchJobs();
+    fetchStatuses();
   }, []);
 
   const handleChange = (e) => {
@@ -146,6 +186,19 @@ export default function EditJobPage() {
             value={formData.dateApplied}
             onChange={handleChange}
           /><br />
+
+          <label htmlFor="statusId">Status:</label><br />
+          <select
+            name="statusId"
+            value={formData.statusId}
+            onChange={handleChange}
+          >
+            {statuses.map((status) => (
+              <option key={status.id} value={status.id}>
+                {status.name}
+              </option>
+            ))}
+          </select><br />
 
           <input type="submit" value="Update Job" />
         </form><br></br></>
