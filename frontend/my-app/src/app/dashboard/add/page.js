@@ -83,7 +83,7 @@ export default function AddJobPage() {
 
           <label htmlFor="dateApplied">Date Applied:</label><br />
           <input
-            type="text"
+            type="date"
             name="dateApplied"
             value={dateApplied}
             onChange={(e) => setDateApplied(e.target.value)}

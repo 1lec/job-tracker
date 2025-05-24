@@ -141,7 +141,7 @@ export default function EditJobPage() {
 
           <label htmlFor="dateApplied">Date Applied:</label><br />
           <input
-            type="text"
+            type="date"
             name="dateApplied"
             value={formData.dateApplied}
             onChange={handleChange}
