@@ -22,7 +22,7 @@ public class JobsController : ControllerBase
 
     // GET: api/jobs
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<JobWithStatusNameDto>>> GetJob()
+    public async Task<ActionResult<IEnumerable<JobWithJoinsDto>>> GetJob()
     {
         // Get the userId from the JWT claims
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -38,14 +38,15 @@ public class JobsController : ControllerBase
         var userJobs = await _context.Jobs
             .Where(j => j.UserId == userId)
             .Include(j => j.Status)
-            .Select(j => new JobWithStatusNameDto
+            .Include(j => j.Contact)
+            .Select(j => new JobWithJoinsDto
             {
                 Id = j.Id,
                 Company = j.Company,
                 JobTitle = j.JobTitle,
                 DateApplied = j.DateApplied,
                 Status = j.Status!.Name,
-                ContactId = j.ContactId
+                Contact = j.Contact!.Email,
             })
             .ToListAsync();
 
