@@ -12,6 +12,18 @@ public class JobTrackerContext : DbContext
     {
     }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Set behavior so that when a contact is deleted, a Job's contactId field is nulled
+        modelBuilder.Entity<Job>()
+            .HasOne(j => j.Contact)
+            .WithMany()
+            .HasForeignKey(j => j.ContactId)
+            .OnDelete(DeleteBehavior.SetNull);
+    }
+
     public DbSet<Contact> Contacts { get; set; } = null!;
     public DbSet<Job> Jobs { get; set; } = null!;
     public DbSet<Skill> Skills { get; set; } = null!;
