@@ -1,6 +1,9 @@
 // Template for this Database Context was obtained from:
 // https://learn.microsoft.com/en-us/aspnet/core/tutorials/first-web-api?view=aspnetcore-9.0&tabs=visual-studio-code#add-a-database-context
 
+// 05/24/2025: Modification to address Contact ON DELETE was done with the help of ChatGPT, saving 30 minutes.
+// Thread: https://chatgpt.com/share/683285ce-669c-800a-b647-62f1942814df
+
 using Microsoft.EntityFrameworkCore;
 
 namespace JobTracker.Backend.Models;
