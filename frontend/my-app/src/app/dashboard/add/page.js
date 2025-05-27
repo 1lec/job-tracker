@@ -19,11 +19,14 @@ export default function AddJobPage() {
   const [dateApplied, setDateApplied] = useState('');
   const [contactId, setContactId] = useState('');
   const [statusId, setStatusId] = useState('');
+  const [skillIds, setSkillIds] = useState('');
 
+  const [skills, setSkills] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [loadingStatuses, setLoadingStatuses] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState(true);
+  const [loadingSkills, setLoadingSkills] = useState(true);
 
   useEffect(() => {
     // Check if user has a token, and redirect to login screen if not
@@ -66,6 +69,47 @@ export default function AddJobPage() {
         console.error(error);
       } finally {
         setLoadingStatuses(false);
+      }
+    }
+
+    async function fetchSkills() {
+      // Check if the user still has a token, in case the token has expired or has been deleted
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      try {
+        const res = await fetch('https://localhost:7091/api/skills', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+        // Catches database-related errors
+        if (!res.ok) {
+          throw new Error('Failed to fetch skills');
+        }
+
+        const data = await res.json();
+        const skillOptions = data.map((skill) => ({
+          value: skill.id,
+          label: skill.name
+        }));
+        setSkills(skillOptions);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingSkills(false);
       }
     }
 
@@ -112,6 +156,7 @@ export default function AddJobPage() {
 
     fetchStatuses();
     fetchContacts();
+    fetchSkills();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -176,7 +221,7 @@ export default function AddJobPage() {
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Add Job</h1>
 
-      {loadingStatuses || loadingContacts ? (
+      {loadingStatuses || loadingContacts || loadingSkills ? (
         <p>Loading job form...</p>
       ) : (
         <><form onSubmit={handleSubmit}>
@@ -229,6 +274,23 @@ export default function AddJobPage() {
               }
               onChange={(selectedOption) => {
                 setContactId(selectedOption.value);
+              }}
+              isClearable={false}
+              styles={customStyles}
+            /><br />
+
+            <label htmlFor="skillIds">Skills:</label><br />
+            <Select
+              name="skillIds"
+              options={[
+                { value: '', label: 'No Skills' },
+                ...skills,
+              ]}
+              value={
+                skills.find(option => option.value === skillIds) || { value: '', label: 'No Skills' }
+              }
+              onChange={(selectedOption) => {
+                setSkillIds(selectedOption.value);
               }}
               isClearable={false}
               styles={customStyles}
