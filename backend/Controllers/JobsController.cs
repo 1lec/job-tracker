@@ -36,19 +36,25 @@ public class JobsController : ControllerBase
 
         // Filter jobs by userId
         var userJobs = await _context.Jobs
-            .Where(j => j.UserId == userId)
-            .Include(j => j.Status)
-            .Include(j => j.Contact)
-            .Select(j => new JobWithJoinsDto
-            {
-                Id = j.Id,
-                Company = j.Company,
-                JobTitle = j.JobTitle,
-                DateApplied = j.DateApplied,
-                Status = j.Status!.Name,
-                Contact = j.Contact!.Email,
-            })
-            .ToListAsync();
+        .Where(j => j.UserId == userId)
+        .Include(j => j.Status)
+        .Include(j => j.Contact)
+        .Include(j => j.JobSkills!)
+            .ThenInclude(js => js.Skill)
+        .Select(j => new JobWithJoinsDto
+        {
+            Id = j.Id,
+            Company = j.Company,
+            JobTitle = j.JobTitle,
+            DateApplied = j.DateApplied,
+            Status = j.Status!.Name,
+            Contact = j.Contact!.Email,
+            Skills = j.JobSkills!
+                        .Where(js => js.Skill != null)
+                        .Select(js => js.Skill!.Name)
+                        .ToList()
+        })
+        .ToListAsync();
 
         return userJobs;
     }
