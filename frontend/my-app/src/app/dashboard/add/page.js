@@ -19,7 +19,7 @@ export default function AddJobPage() {
   const [dateApplied, setDateApplied] = useState('');
   const [contactId, setContactId] = useState('');
   const [statusId, setStatusId] = useState('');
-  const [skillIds, setSkillIds] = useState('');
+  const [skillIds, setSkillIds] = useState([]);
 
   const [skills, setSkills] = useState([]);
   const [contacts, setContacts] = useState([]);
@@ -282,19 +282,16 @@ export default function AddJobPage() {
             <label htmlFor="skillIds">Skills:</label><br />
             <Select
               name="skillIds"
-              options={[
-                { value: '', label: 'No Skills' },
-                ...skills,
-              ]}
-              value={
-                skills.find(option => option.value === skillIds) || { value: '', label: 'No Skills' }
-              }
-              onChange={(selectedOption) => {
-                setSkillIds(selectedOption.value);
+              options={skills}
+              value={skills.filter(skill => skillIds.includes(skill.value))}
+              onChange={(selectedOptions) => {
+                const selectedIds = selectedOptions.map(option => option.value);
+                setSkillIds(selectedIds);
               }}
-              isClearable={false}
+              isMulti
               styles={customStyles}
-            /><br />
+            />
+            <br />
 
 
             <input type="submit" value="Add Job" />
