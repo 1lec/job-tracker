@@ -18,7 +18,7 @@ export default function AddJobPage() {
   const [jobTitle, setJobTitle] = useState('');
   const [dateApplied, setDateApplied] = useState('');
   const [contactId, setContactId] = useState('');
-  const [statusId, setStatusId] = useState('');
+  const [statusId, setStatusId] = useState(1);
   const [skillIds, setSkillIds] = useState([]);
 
   const [skills, setSkills] = useState([]);
@@ -175,7 +175,7 @@ export default function AddJobPage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({company, jobTitle, dateApplied, statusId, contactId: contactId || null}),
+        body: JSON.stringify({company, jobTitle, dateApplied, statusId, contactId: contactId || null, skillIds}),
       });
 
       // Catches authorization errors

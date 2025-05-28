@@ -135,7 +135,7 @@ public class JobsController : ControllerBase
 
     // POST: api/jobs (Insert)
     [HttpPost]
-    public async Task<ActionResult<Job>> PostJob(CreateJobDto jobDto)
+    public async Task<ActionResult<Job>> PostJob([FromBody] CreateJobDto jobDto)
     {
         // Extract userId from token received from frontend
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -159,7 +159,22 @@ public class JobsController : ControllerBase
         _context.Jobs.Add(job);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction("GetJob", new { id = job.Id }, job);
+        if (jobDto.SkillIds != null && jobDto.SkillIds.Count > 0)
+        {
+            for (int i = 0; i < jobDto.SkillIds.Count; i++)
+            {
+                _context.JobSkills.Add(new JobSkill
+                {
+                    JobId = job.Id,
+                    SkillId = jobDto.SkillIds[i]
+                });
+            }
+
+            await _context.SaveChangesAsync();
+        }
+
+        // Return the jobDto instead of a job object to avoid a circular reference error
+        return CreatedAtAction("GetJob", new { id = job.Id }, jobDto);
     }
 
     // DELETE: api/jobs/5
