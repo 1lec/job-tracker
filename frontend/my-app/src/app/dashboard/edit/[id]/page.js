@@ -186,7 +186,6 @@ export default function EditJobPage() {
         }
 
         const data = await res.json();
-        console.log('Raw job data:', data);
         setFormData({
           id: data.id || '',
           company: data.company || '',
@@ -335,15 +334,10 @@ export default function EditJobPage() {
           <label htmlFor="contactId">Contact:</label><br />
           <Select
             name="contactId"
-            options={[
-              { value: '', label: 'No Contact' },
-              ...contacts,
-            ]}
-            value={
-              contacts.find(option => option.value === formData.contactId) || { value: '', label: 'No Contact' }
-            }
+            options={contacts}
+            value={contacts.find(option => option.value === formData.contactId)}
             onChange={handleContactChange}
-            isClearable={false}
+            isClearable={true}
             styles={customStyles}
           /><br />
 

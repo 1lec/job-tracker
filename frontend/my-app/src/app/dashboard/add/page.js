@@ -267,17 +267,12 @@ export default function AddJobPage() {
             <label htmlFor="contactId">Contact:</label><br />
             <Select
               name="contactId"
-              options={[
-                { value: '', label: 'No Contact' },
-                ...contacts,
-              ]}
-              value={
-                contacts.find(option => option.value === contactId) || { value: '', label: 'No Contact' }
-              }
+              options={contacts}
+              value={contacts.find(option => option.value === contactId)}
               onChange={(selectedOption) => {
-                setContactId(selectedOption.value);
+                setContactId(selectedOption ? selectedOption.value : null);
               }}
-              isClearable={false}
+              isClearable={true}
               styles={customStyles}
             /><br />
 
