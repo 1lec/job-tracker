@@ -5,6 +5,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import Select from 'react-select';
 import styles from '../../styles/branding.module.css';
 
 export default function EditProfilePage() {
@@ -14,8 +15,11 @@ export default function EditProfilePage() {
     firstName: '',
     lastName: '',
     email: '',
+    skillIds: [],
   });
-  const [loading, setLoading] = useState(true);
+  const [skills, setSkills] = useState([]);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [loadingSkills, setLoadingSkills] = useState(true);
 
   useEffect(() => {
     // Check if user has a token, and redirect to login screen if not
@@ -54,20 +58,57 @@ export default function EditProfilePage() {
           firstName: data.firstName || '',
           lastName: data.lastName || '',
           email: data.email || '',
+          skillIds: data.skillIds || [],
         });
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false);
+        setLoadingUser(false);
+      }
+    }
+
+    async function fetchSkills() {
+      try {
+        const res = await fetch('https://localhost:7091/api/skills', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Catches database-related errors
+        if (!res.ok) {
+          throw new Error('Failed to fetch skills');
+        }
+
+        const data = await res.json();
+        const skillOptions = data.map((skill) => ({
+          value: skill.id,
+          label: skill.name
+        }));
+        setSkills(skillOptions);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingSkills(false);
       }
     }
 
     fetchProfile();
+    fetchSkills();
   }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSkillsChange = (selectedOptions) => {
+    const skillIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
+      setFormData(prev => ({
+        ...prev,
+        skillIds,
+      }));
   };
 
   const handleSubmit = async (e) => {
@@ -107,11 +148,31 @@ export default function EditProfilePage() {
     }
     };
 
+  // Styling for react-select dropdown
+  const customStyles = {
+    singleValue: (provided) => ({
+      ...provided,
+      color: 'black',
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      color: state.isSelected ? 'white' : 'black',
+    }),
+    input: (provided) => ({
+      ...provided,
+      color: 'black',
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: 'gray',
+    }),
+  };
+
   return (
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Edit Profile</h1>
 
-      {loading ? (
+      {loadingUser || loadingSkills ? (
         <p>Loading profile edit form...</p>
       ) : (
         <><form onSubmit={handleSubmit}>
@@ -138,6 +199,17 @@ export default function EditProfilePage() {
             value={formData.email}
             onChange={handleChange}
           /><br />
+
+          <label htmlFor="skillIds">Skills:</label><br />
+          <Select
+            name="skillIds"
+            options={skills}
+            value={skills.filter(skill => (formData.skillIds ?? []).includes(skill.value))}
+            onChange={handleSkillsChange}
+            isMulti
+            styles={customStyles}
+          />
+          <br />
 
           <input type="submit" value="Update Profile" />
         </form><br></br></>

@@ -3,6 +3,8 @@
 // Thread: https://chatgpt.com/share/68323fa7-9124-800a-863f-94f53e27e1a2
 // 05/24/2025: Dynamic select-react dropdown was made with help from ChatGPT, saving 2 hours of work.
 // Thread: https://chatgpt.com/share/68327b44-2588-800a-b0ba-608b6d2dc781
+// 05/27/2025: To create the form's skills component, I used ChatGPT assistance, saving 30 minutes of work.
+// Thread: https://chatgpt.com/share/683683aa-b540-800a-8a8f-7fd410840951
 
 // app/dashboard/add/page.js
 'use client';
@@ -18,12 +20,15 @@ export default function AddJobPage() {
   const [jobTitle, setJobTitle] = useState('');
   const [dateApplied, setDateApplied] = useState('');
   const [contactId, setContactId] = useState('');
-  const [statusId, setStatusId] = useState('');
+  const [statusId, setStatusId] = useState(1);
+  const [skillIds, setSkillIds] = useState([]);
 
+  const [skills, setSkills] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [loadingStatuses, setLoadingStatuses] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState(true);
+  const [loadingSkills, setLoadingSkills] = useState(true);
 
   useEffect(() => {
     // Check if user has a token, and redirect to login screen if not
@@ -66,6 +71,33 @@ export default function AddJobPage() {
         console.error(error);
       } finally {
         setLoadingStatuses(false);
+      }
+    }
+
+    async function fetchSkills() {
+      try {
+        const res = await fetch('https://localhost:7091/api/skills', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Catches database-related errors
+        if (!res.ok) {
+          throw new Error('Failed to fetch skills');
+        }
+
+        const data = await res.json();
+        const skillOptions = data.map((skill) => ({
+          value: skill.id,
+          label: skill.name
+        }));
+        setSkills(skillOptions);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingSkills(false);
       }
     }
 
@@ -112,6 +144,7 @@ export default function AddJobPage() {
 
     fetchStatuses();
     fetchContacts();
+    fetchSkills();
   }, []);
 
   const handleSubmit = async (e) => {
@@ -130,7 +163,7 @@ export default function AddJobPage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({company, jobTitle, dateApplied, statusId, contactId: contactId || null}),
+        body: JSON.stringify({company, jobTitle, dateApplied, statusId, contactId: contactId || null, skillIds}),
       });
 
       // Catches authorization errors
@@ -176,7 +209,7 @@ export default function AddJobPage() {
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Add Job</h1>
 
-      {loadingStatuses || loadingContacts ? (
+      {loadingStatuses || loadingContacts || loadingSkills ? (
         <p>Loading job form...</p>
       ) : (
         <><form onSubmit={handleSubmit}>
@@ -220,19 +253,28 @@ export default function AddJobPage() {
             <label htmlFor="contactId">Contact:</label><br />
             <Select
               name="contactId"
-              options={[
-                { value: '', label: 'No Contact' },
-                ...contacts,
-              ]}
-              value={
-                contacts.find(option => option.value === contactId) || { value: '', label: 'No Contact' }
-              }
+              options={contacts}
+              value={contacts.find(option => option.value === contactId)}
               onChange={(selectedOption) => {
-                setContactId(selectedOption.value);
+                setContactId(selectedOption ? selectedOption.value : null);
               }}
-              isClearable={false}
+              isClearable={true}
               styles={customStyles}
             /><br />
+
+            <label htmlFor="skillIds">Skills:</label><br />
+            <Select
+              name="skillIds"
+              options={skills}
+              value={skills.filter(skill => skillIds.includes(skill.value))}
+              onChange={(selectedOptions) => {
+                const selectedIds = selectedOptions.map(option => option.value);
+                setSkillIds(selectedIds);
+              }}
+              isMulti
+              styles={customStyles}
+            />
+            <br />
 
 
             <input type="submit" value="Add Job" />

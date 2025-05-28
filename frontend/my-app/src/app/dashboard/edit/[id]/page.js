@@ -1,6 +1,8 @@
 // 05/22/2025: Changes to incorporate JWT into the page's backend calls were modeled after changes to the analogous contact/edit/[id]/page.js
-// 05/25/2024: Changes to allow for updating of contact were done with assistance from ChatGPT, saving an hour of work.
+// 05/25/2025: Changes to allow for updating of contact were done with assistance from ChatGPT, saving an hour of work.
 // Thread: https://chatgpt.com/share/68329920-f520-800a-8eb8-dba201d50585
+// 05/27/2025: The skills component and corresponding change handler were finished with ChatGPT assistance, saving an hour of work.
+// Thread: https://chatgpt.com/share/6836824e-7c70-800a-9b80-884c2c020717
 
 // app/dashboard/edit/[id]/page.js
 'use client';
@@ -21,19 +23,49 @@ export default function EditJobPage() {
     userId: '',
     statusId: '',
     contactId: null,
+    skillIds: [],
   });
 
+  const [skills, setSkills] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [loadingStatuses, setLoadingStatuses] = useState(true);
   const [loadingJob, setLoadingJob] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState(true);
+  const [loadingSkills, setLoadingSkills] = useState(true);
 
   useEffect(() => {
     // Check if user has a token, and redirect to login screen if not
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
+    }
+
+    async function fetchSkills() {
+      try {
+        const res = await fetch('https://localhost:7091/api/skills', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Catches database-related errors
+        if (!res.ok) {
+          throw new Error('Failed to fetch skills');
+        }
+
+        const data = await res.json();
+        const skillOptions = data.map((skill) => ({
+          value: skill.id,
+          label: skill.name
+        }));
+        setSkills(skillOptions);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingSkills(false);
+      }
     }
 
     async function fetchStatuses() {
@@ -148,6 +180,7 @@ export default function EditJobPage() {
           userId: data.userId || '',
           statusId: data.statusId || '',
           contactId: data.contactId || null,
+          skillIds: data.skillIds || [],
         });
       } catch (error) {
         console.error(error);
@@ -159,6 +192,7 @@ export default function EditJobPage() {
     fetchJobs();
     fetchStatuses();
     fetchContacts();
+    fetchSkills();
   }, []);
 
   const handleChange = (e) => {
@@ -171,6 +205,14 @@ export default function EditJobPage() {
       ...prev,
       contactId: selectedOption && selectedOption.value !== '' ? selectedOption.value : null
     }));
+  };
+
+  const handleSkillsChange = (selectedOptions) => {
+    const skillIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
+      setFormData(prev => ({
+        ...prev,
+        skillIds,
+      }));
   };
 
   const handleSubmit = async (e) => {
@@ -234,7 +276,7 @@ export default function EditJobPage() {
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Edit Job</h1>
 
-      {loadingJob || loadingStatuses || loadingContacts ? (
+      {loadingJob || loadingStatuses || loadingContacts || loadingSkills ? (
         <p>Loading job edit form...</p>
       ) : (
         <><form onSubmit={handleSubmit}>
@@ -278,17 +320,23 @@ export default function EditJobPage() {
           <label htmlFor="contactId">Contact:</label><br />
           <Select
             name="contactId"
-            options={[
-              { value: '', label: 'No Contact' },
-              ...contacts,
-            ]}
-            value={
-              contacts.find(option => option.value === formData.contactId) || { value: '', label: 'No Contact' }
-            }
+            options={contacts}
+            value={contacts.find(option => option.value === formData.contactId)}
             onChange={handleContactChange}
-            isClearable={false}
+            isClearable={true}
             styles={customStyles}
           /><br />
+
+          <label htmlFor="skillIds">Skills:</label><br />
+          <Select
+            name="skillIds"
+            options={skills}
+            value={skills.filter(skill => (formData.skillIds ?? []).includes(skill.value))}
+            onChange={handleSkillsChange}
+            isMulti
+            styles={customStyles}
+          />
+          <br />
 
           <input type="submit" value="Update Job" />
         </form><br></br></>

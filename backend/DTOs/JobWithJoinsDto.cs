@@ -8,4 +8,5 @@ public class JobWithJoinsDto
     public required DateOnly DateApplied { get; set; }
     public required string Status { get; set; }
     public string? Contact { get; set; }
+    public List<string>? Skills { get; set; }
 }

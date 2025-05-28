@@ -100,6 +100,18 @@ export default function JobDashboard() {
   function handleAdd() {
     router.push(`/dashboard/add/`);
   }
+
+  // Converts a list of skills into a string of comma-separated skills
+  function skillListToSkillString(skills) {
+    var skillString = '';
+    for (var i = 0; i < skills.length; i++){
+      skillString+=skills[i];
+      if (i < skills.length - 1) {
+        skillString+= ', ';
+      }
+    }
+    return skillString;
+  }
   
   return (
     <main className={styles.wrapper}>
@@ -136,21 +148,22 @@ export default function JobDashboard() {
               <th>Date Applied</th>
               <th>Skills</th>
               <th>Contact</th>
-              <th>Am I cooked?</th>
               <th>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {jobs.map(({ id, company, jobTitle, dateApplied, status, contact }) => (
+            {jobs.map(({ id, company, jobTitle, dateApplied, status, contact, skills }) => (
               <tr key={id}>
                 <td>{company}</td>
                 <td>{jobTitle}</td>
                 <td>{status}</td>
                 <td>{dateApplied}</td>
-                <td>Skills</td>
+                <td>{skillListToSkillString(skills)}</td>
                 <td>{contact}</td>
-                <td>Am I cooked?</td>
                 <td>
+                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }}>
+                    urCOOKED
+                  </button>
                   <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleEdit(id)}>
                     Edit
                   </button>

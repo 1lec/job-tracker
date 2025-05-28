@@ -114,7 +114,7 @@ export default function ContactPage() {
 
       <div className={styles.buttonRow}>
         <button className={styles.buttonFunction} onClick={() => handleAdd()}>
-          Add New Person
+          Add Contact
         </button>
         <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home

@@ -8,4 +8,5 @@ public class EditJobDto
     public required DateOnly DateApplied { get; set; }
     public required long StatusId { get; set; }
     public long? ContactId { get; set; }
+    public List<long>? SkillIds { get; set; }
 }
