@@ -40,9 +40,13 @@ public class UsersController : ControllerBase
                 FirstName = u.FirstName,
                 LastName = u.LastName,
                 Email = u.Email,
+                SkillIds = u.UserSkills!
+                        .Where(us => us.Skill != null)
+                        .Select(us => us.Skill!.Id)
+                        .ToList(),
                 Skills = u.UserSkills!
-                        .Where(js => js.Skill != null)
-                        .Select(js => js.Skill!.Name)
+                        .Where(us => us.Skill != null)
+                        .Select(us => us.Skill!.Name)
                         .ToList()
             })
             .FirstOrDefaultAsync();
