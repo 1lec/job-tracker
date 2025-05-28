@@ -148,7 +148,6 @@ export default function JobDashboard() {
               <th>Date Applied</th>
               <th>Skills</th>
               <th>Contact</th>
-              <th>Am I cooked?</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -161,8 +160,10 @@ export default function JobDashboard() {
                 <td>{dateApplied}</td>
                 <td>{skillListToSkillString(skills)}</td>
                 <td>{contact}</td>
-                <td>Am I cooked?</td>
                 <td>
+                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }}>
+                    urCOOKED
+                  </button>
                   <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleEdit(id)}>
                     Edit
                   </button>
