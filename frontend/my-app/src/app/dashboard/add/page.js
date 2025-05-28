@@ -75,27 +75,13 @@ export default function AddJobPage() {
     }
 
     async function fetchSkills() {
-      // Check if the user still has a token, in case the token has expired or has been deleted
-      const token = localStorage.getItem('token');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
-
       try {
         const res = await fetch('https://localhost:7091/api/skills', {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            'Content-Type': 'application/json'
           }
         });
-
-        // Catches authorization errors
-        if (res.status === 401) {
-          router.push('/login');
-          return;
-        }
 
         // Catches database-related errors
         if (!res.ok) {
