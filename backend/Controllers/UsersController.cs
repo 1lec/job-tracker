@@ -75,6 +75,7 @@ public class UsersController : ControllerBase
 
         // Search for 
         var user = await _context.Users
+            .Include(u => u.UserSkills)
             .FirstOrDefaultAsync(u => u.Id == userId);
 
         if (user == null)
@@ -86,6 +87,20 @@ public class UsersController : ControllerBase
         user.FirstName = userDto.FirstName;
         user.LastName = userDto.LastName;
         user.Email = userDto.Email;
+
+        // Create two lists: the former contains skillIds already in the user, the latter contains skillIds received from the edit form
+        var currentSkillIds = user.UserSkills.Select(us => us.SkillId).ToList();
+        var newSkillIds = userDto.SkillIds ?? [];
+
+        // Extract current skillIds that are not present in the list obtained from the edit form, then delete them
+        var skillsToRemove = user.UserSkills.Where(us => !newSkillIds.Contains(us.SkillId)).ToList();
+        _context.UserSkills.RemoveRange(skillsToRemove);
+
+        // If a skillId is not already present in the current skills, add it to the user
+        var skillsToAdd = newSkillIds.Where(id => !currentSkillIds.Contains(id))
+            .Select(id => new UserSkill { UserId = user.Id, SkillId = id });
+
+        await _context.UserSkills.AddRangeAsync(skillsToAdd);
 
         // Save the changes to the profile
         try
