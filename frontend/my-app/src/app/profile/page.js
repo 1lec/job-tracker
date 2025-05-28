@@ -10,6 +10,7 @@ export default function ProfilePage() {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('')
+  const [skills, setSkills] = useState([])
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -48,10 +49,10 @@ export default function ProfilePage() {
         }
 
         const data = await res.json();
-        console.log("Data from backend:", data)
         setFirstName(data.firstName);
         setLastName(data.lastName);
         setEmail(data.email);
+        setSkills(data.skills);
       } catch (error) {
         console.error(error);
       } finally {
@@ -64,6 +65,18 @@ export default function ProfilePage() {
 
   function handleEdit() {
     router.push(`/profile/edit/`);
+  }
+
+  // Converts a list of skills into a string of comma-separated skills
+  function skillListToSkillString(skills) {
+    var skillString = '';
+    for (var i = 0; i < skills.length; i++){
+      skillString+=skills[i];
+      if (i < skills.length - 1) {
+        skillString+= ', ';
+      }
+    }
+    return skillString;
   }
 
   return (
@@ -83,7 +96,7 @@ export default function ProfilePage() {
           </div>
 
           <p style={{ marginBottom: '2rem' }}>
-            <strong>Skills:</strong> JavaScript, SQL, React
+            <strong>Skills:</strong> {skillListToSkillString(skills)}
           </p>
         </div>
       )}

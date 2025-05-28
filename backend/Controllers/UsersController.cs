@@ -31,23 +31,28 @@ public class UsersController : ControllerBase
         var userId = long.Parse(userIdClaim.Value);
 
         var user = await _context.Users
-            .FindAsync(userId);
+            .Where(u => u.Id == userId)
+            .Include(u => u.UserSkills!)
+                .ThenInclude(us => us.Skill)
+            .Select(u => new UserDto
+            {
+                Id = u.Id,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+                Email = u.Email,
+                Skills = u.UserSkills!
+                        .Where(js => js.Skill != null)
+                        .Select(js => js.Skill!.Name)
+                        .ToList()
+            })
+            .FirstOrDefaultAsync();
 
         if (user == null)
         {
             return NotFound();
         }
 
-        // Transfers information to a DTO so that the user password isn't sent to the frontend
-        var userDto = new UserDto
-        {
-            Id = user.Id,
-            FirstName = user.FirstName,
-            LastName = user.LastName,
-            Email = user.Email
-        };
-
-        return userDto;
+        return user;
     }
 
     // PUT: api/users (update)
