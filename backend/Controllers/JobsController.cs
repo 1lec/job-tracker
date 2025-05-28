@@ -61,27 +61,38 @@ public class JobsController : ControllerBase
 
     // GET: api/jobs/5
     [HttpGet("{id}")]
-    public async Task<ActionResult<Job>> GetJob(long id)
+public async Task<ActionResult<EditJobDto>> GetJob(long id)
+{
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
     {
-        // Get the userId from the JWT claims
-        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        if (userIdClaim == null)
-        {
-            return Unauthorized();
-        }
-
-        // Convert string userId from token into a long, which matches the userId type in database
-        var userId = long.Parse(userIdClaim.Value);
-
-        var job = await _context.Jobs.FindAsync(id);
-
-        if (job == null || job.UserId != userId)
-        {
-            return NotFound();
-        }
-
-        return job;
+        return Unauthorized();
     }
+
+    var userId = long.Parse(userIdClaim.Value);
+
+    var job = await _context.Jobs
+        .Include(j => j.JobSkills)
+        .FirstOrDefaultAsync(j => j.Id == id);
+
+    if (job == null || job.UserId != userId)
+    {
+        return NotFound();
+    }
+
+    var jobDto = new EditJobDto
+    {
+        Id = job.Id,
+        Company = job.Company,
+        JobTitle = job.JobTitle,
+        DateApplied = job.DateApplied,
+        StatusId = job.StatusId,
+        ContactId = job.ContactId,
+        SkillIds = [.. job.JobSkills.Select(js => js.SkillId)]
+    };
+
+    return Ok(jobDto);
+}
 
     // PUT: api/jobs/5 (update)
     [HttpPut("{id}")]
@@ -99,6 +110,7 @@ public class JobsController : ControllerBase
 
         // Use the Id for the job and the userId from the token to fetch the job itself
         var job = await _context.Jobs
+            .Include(j => j.JobSkills)
             .FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId);
 
         if (job == null)
@@ -112,6 +124,20 @@ public class JobsController : ControllerBase
         job.DateApplied = jobDto.DateApplied;
         job.StatusId = jobDto.StatusId;
         job.ContactId = jobDto.ContactId;
+
+        // Create two lists: the former contains skillIds already in the job, the latter contains skillIds received from the edit form
+        var currentSkillIds = job.JobSkills.Select(js => js.SkillId).ToList();
+        var newSkillIds = jobDto.SkillIds ?? [];
+
+        // Extract current skillIds that are not present in the list obtained from the edit form, then delete them
+        var skillsToRemove = job.JobSkills.Where(js => !newSkillIds.Contains(js.SkillId)).ToList();
+        _context.JobSkills.RemoveRange(skillsToRemove);
+
+        // If a skillId is not already present in the current skills, add it to the job
+        var skillsToAdd = newSkillIds.Where(id => !currentSkillIds.Contains(id))
+            .Select(id => new JobSkill { JobId = job.Id, SkillId = id });
+
+        await _context.JobSkills.AddRangeAsync(skillsToAdd);
 
         // Save changes to the job
         try

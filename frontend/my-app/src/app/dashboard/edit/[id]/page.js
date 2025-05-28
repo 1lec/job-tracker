@@ -21,19 +21,63 @@ export default function EditJobPage() {
     userId: '',
     statusId: '',
     contactId: null,
+    skillIds: [],
   });
 
+  const [skills, setSkills] = useState([]);
   const [contacts, setContacts] = useState([]);
   const [statuses, setStatuses] = useState([]);
   const [loadingStatuses, setLoadingStatuses] = useState(true);
   const [loadingJob, setLoadingJob] = useState(true);
   const [loadingContacts, setLoadingContacts] = useState(true);
+  const [loadingSkills, setLoadingSkills] = useState(true);
 
   useEffect(() => {
     // Check if user has a token, and redirect to login screen if not
     const token = localStorage.getItem('token');
     if (!token) {
       router.push('/login');
+    }
+
+    async function fetchSkills() {
+      // Check if the user still has a token, in case the token has expired or has been deleted
+      const token = localStorage.getItem('token');
+      if (!token) {
+        router.push('/login');
+        return;
+      }
+
+      try {
+        const res = await fetch('https://localhost:7091/api/skills', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        // Catches authorization errors
+        if (res.status === 401) {
+          router.push('/login');
+          return;
+        }
+
+        // Catches database-related errors
+        if (!res.ok) {
+          throw new Error('Failed to fetch skills');
+        }
+
+        const data = await res.json();
+        const skillOptions = data.map((skill) => ({
+          value: skill.id,
+          label: skill.name
+        }));
+        setSkills(skillOptions);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingSkills(false);
+      }
     }
 
     async function fetchStatuses() {
@@ -140,6 +184,7 @@ export default function EditJobPage() {
         }
 
         const data = await res.json();
+        console.log('Raw job data:', data);
         setFormData({
           id: data.id || '',
           company: data.company || '',
@@ -148,6 +193,7 @@ export default function EditJobPage() {
           userId: data.userId || '',
           statusId: data.statusId || '',
           contactId: data.contactId || null,
+          skillIds: data.skillIds || [],
         });
       } catch (error) {
         console.error(error);
@@ -159,6 +205,7 @@ export default function EditJobPage() {
     fetchJobs();
     fetchStatuses();
     fetchContacts();
+    fetchSkills();
   }, []);
 
   const handleChange = (e) => {
@@ -170,6 +217,14 @@ export default function EditJobPage() {
     setFormData(prev => ({
       ...prev,
       contactId: selectedOption && selectedOption.value !== '' ? selectedOption.value : null
+    }));
+  };
+
+  const handleSkillsChange = (selectedOptions) => {
+  const skillIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    setFormData(prev => ({
+      ...prev,
+      skillIds,
     }));
   };
 
@@ -234,7 +289,7 @@ export default function EditJobPage() {
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Edit Job</h1>
 
-      {loadingJob || loadingStatuses || loadingContacts ? (
+      {loadingJob || loadingStatuses || loadingContacts || loadingSkills ? (
         <p>Loading job edit form...</p>
       ) : (
         <><form onSubmit={handleSubmit}>
@@ -289,6 +344,17 @@ export default function EditJobPage() {
             isClearable={false}
             styles={customStyles}
           /><br />
+
+          <label htmlFor="skillIds">Skills:</label><br />
+          <Select
+            name="skillIds"
+            options={skills}
+            value={skills.filter(skill => (formData.skillIds ?? []).includes(skill.value))}
+            onChange={handleSkillsChange}
+            isMulti
+            styles={customStyles}
+          />
+          <br />
 
           <input type="submit" value="Update Job" />
         </form><br></br></>
