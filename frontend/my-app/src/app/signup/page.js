@@ -1,7 +1,8 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Select from 'react-select';
 import styles from '../styles/branding.module.css';
 
 export default function SignupPage() {
@@ -11,24 +12,52 @@ export default function SignupPage() {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [skillsInput, setSkillsInput] = useState('');
+  const [skillIds, setSkillIds] = useState([]);
   const [error, setError] = useState('');
+
+  const [skills, setSkills] = useState([]);
+  const [loadingSkills, setLoadingSkills] = useState(true);
+
+  useEffect(() => {
+    async function fetchSkills() {
+      try {
+        const res = await fetch('https://localhost:7091/api/skills', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Catches database-related errors
+        if (!res.ok) {
+          throw new Error('Failed to fetch skills');
+        }
+
+        const data = await res.json();
+        const skillOptions = data.map((skill) => ({
+          value: skill.id,
+          label: skill.name
+        }));
+        setSkills(skillOptions);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingSkills(false);
+      }
+    }
+
+    fetchSkills();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    // Convert comma-separated skills into an array
-    const skills = skillsInput
-      .split(',')
-      .map((s) => s.trim())
-      .filter((s) => s.length > 0);
-    
+   
     try {
       const res = await fetch('https://localhost:7091/api/authentication/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ firstName, lastName, email, password, skills }),
+        body: JSON.stringify({ firstName, lastName, email, password, skillIds }),
       });
 
       if (!res.ok) {
@@ -43,6 +72,26 @@ export default function SignupPage() {
     }
   };
 
+  // Styling for react-select dropdown
+  const customStyles = {
+    singleValue: (provided) => ({
+      ...provided,
+      color: 'black',
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      color: state.isSelected ? 'white' : 'black',
+    }),
+    input: (provided) => ({
+      ...provided,
+      color: 'black',
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: 'gray',
+    }),
+  };
+
   return (
     <main className={styles.wrapper}>
       <h1 className={styles.title}>Signup</h1>
@@ -50,7 +99,10 @@ export default function SignupPage() {
         New to Job Tracker? Complete the form to create your account and optimize your job search!
       </p>
 
-      <form className={styles.table} style={{ padding: '1rem', borderRadius: '8px' }} onSubmit={handleSubmit}>
+      {loadingSkills ? (
+        <p>Loading signup form...</p>
+      ) : (
+        <form className={styles.table} style={{ padding: '1rem', borderRadius: '8px' }} onSubmit={handleSubmit}>
         <label htmlFor="first_name">First Name:</label><br />
         <input
           type="text"
@@ -91,15 +143,18 @@ export default function SignupPage() {
           onChange={(e) => setPassword(e.target.value)}
         /><br />
 
-        <label htmlFor="skills">Skills:</label><br />
-        <input
-          type="text"
-          id="skills"
-          name="skills"
-          required
-          value={skillsInput}
-          onChange={(e) => setSkillsInput(e.target.value)}
-        /><br /><br />
+        <label htmlFor="skillIds">Skills:</label><br />
+        <Select
+          name="skillIds"
+          options={skills}
+          value={skills.filter(skill => (skillIds ?? []).includes(skill.value))}
+          onChange={(selectedOptions) =>
+            setSkillIds(selectedOptions ? selectedOptions.map(opt => opt.value) : [])
+          }
+          isMulti
+          styles={customStyles}
+        />
+        <br />
 
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
@@ -109,7 +164,8 @@ export default function SignupPage() {
           className={styles.navButton}
         />
       </form>
-
+      )}
+      
       <div className={styles.buttonRow}>
         <button className={styles.buttonFunction} onClick={() => router.push('/')}>
           Back to Home

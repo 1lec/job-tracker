@@ -6,5 +6,5 @@ public class SignupRequest
     public string LastName { get; set; } = "";
     public string Email { get; set; } = "";
     public string Password { get; set; } = "";
-    public List<string> Skills { get; set; } = new();
+    public List<long>? SkillIds { get; set; } = new();
 }

@@ -28,7 +28,7 @@ namespace JobTracker.Backend.Controllers
         }
 
         [HttpPost("signup")]
-        public IActionResult Signup([FromBody] SignupRequest request)
+        public async Task<IActionResult> Signup([FromBody] SignupRequest request)
         {
             Console.WriteLine($"Received signup request: {request.FirstName} {request.LastName} ({request.Email})");
 
@@ -49,9 +49,24 @@ namespace JobTracker.Backend.Controllers
 
             // Add to database and save
             _context.Users.Add(newUser);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             Console.WriteLine($"User signed up successfully: {newUser.FirstName} {newUser.LastName} ({newUser.Email})");
+
+            // Iterate through any skillIds and add them to the UserSkills table
+            if (request.SkillIds != null && request.SkillIds.Count > 0)
+            {
+                for (int i = 0; i < request.SkillIds.Count; i++)
+                {
+                    _context.UserSkills.Add(new UserSkill
+                    {
+                        UserId = newUser.Id,
+                        SkillId = request.SkillIds[i]
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+            }
 
             return Ok(new
             {
