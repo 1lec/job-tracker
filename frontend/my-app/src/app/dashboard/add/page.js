@@ -3,6 +3,8 @@
 // Thread: https://chatgpt.com/share/68323fa7-9124-800a-863f-94f53e27e1a2
 // 05/24/2025: Dynamic select-react dropdown was made with help from ChatGPT, saving 2 hours of work.
 // Thread: https://chatgpt.com/share/68327b44-2588-800a-b0ba-608b6d2dc781
+// 05/27/2025: To create the form's skills component, I used ChatGPT assistance, saving 30 minutes of work.
+// Thread: https://chatgpt.com/share/683683aa-b540-800a-8a8f-7fd410840951
 
 // app/dashboard/add/page.js
 'use client';

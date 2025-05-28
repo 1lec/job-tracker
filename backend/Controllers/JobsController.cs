@@ -1,6 +1,8 @@
 // 05/22/2025: Changes to incorporate JWT into this controller's methods were modeled after changes to the analogous ContactsController.cs
 // 05/24/2025: Modifications to LINQ query to obtain a list of jobs made with help from ChatGPT, saving 30 minutes of work.
 // Thread: https://chatgpt.com/share/68323fa7-9124-800a-863f-94f53e27e1a2
+// 05/27/2025: To help with incorporating JobSkills into these methods, I used ChatGPT, saving 2 hours of work.
+// Threads: https://chatgpt.com/share/683683aa-b540-800a-8a8f-7fd410840951 https://chatgpt.com/share/6836824e-7c70-800a-9b80-884c2c020717
 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;

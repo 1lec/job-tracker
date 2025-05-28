@@ -1,6 +1,8 @@
 // 05/22/2025: Changes to incorporate JWT into the page's backend calls were modeled after changes to the analogous contact/edit/[id]/page.js
-// 05/25/2024: Changes to allow for updating of contact were done with assistance from ChatGPT, saving an hour of work.
+// 05/25/2025: Changes to allow for updating of contact were done with assistance from ChatGPT, saving an hour of work.
 // Thread: https://chatgpt.com/share/68329920-f520-800a-8eb8-dba201d50585
+// 05/27/2025: The skills component and corresponding change handler were finished with ChatGPT assistance, saving an hour of work.
+// Thread: https://chatgpt.com/share/6836824e-7c70-800a-9b80-884c2c020717
 
 // app/dashboard/edit/[id]/page.js
 'use client';
@@ -221,11 +223,11 @@ export default function EditJobPage() {
   };
 
   const handleSkillsChange = (selectedOptions) => {
-  const skillIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
-    setFormData(prev => ({
-      ...prev,
-      skillIds,
-    }));
+    const skillIds = selectedOptions ? selectedOptions.map(option => option.value) : [];
+      setFormData(prev => ({
+        ...prev,
+        skillIds,
+      }));
   };
 
   const handleSubmit = async (e) => {
