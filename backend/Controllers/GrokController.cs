@@ -56,7 +56,7 @@ namespace JobTracker.Backend.Controllers
 
             var chatService = new OpenAIChatCompletionService(
                 modelId: "grok-beta", 
-                apiKey: "your_grok_api_key", 
+                apiKey: "xai-jH06gHRactr1k17YDYCIUdXhe6cYPThOzJMWV20i4QC3Yv1QGVCB3R0KItlHVQ1luszL9dCodRB5qLk7", 
                 endpoint: new Uri("https://api.x.ai/v1")
             );
 

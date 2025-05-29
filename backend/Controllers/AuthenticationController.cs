@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Text;
 using JobTracker.Backend.Models;
 using JobTracker.Backend.Models.Auth;
+using Microsoft.AspNetCore.Identity;
 
 namespace JobTracker.Backend.Controllers
 {
@@ -46,6 +47,11 @@ namespace JobTracker.Backend.Controllers
                 Email = request.Email,
                 Password = request.Password // Must hash passwords in production
             };
+
+            // hash passowrd
+            //https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.identity.passwordhasher-1?view=aspnetcore-8.0
+            var hasher = new PasswordHasher<User>();
+            newUser.Password = hasher.HashPassword(newUser, newUser.Password);
 
             // Add to database and save
             _context.Users.Add(newUser);
@@ -83,14 +89,26 @@ namespace JobTracker.Backend.Controllers
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginRequest request)
         {
+            // getting user from database
             var user = _context.Users.FirstOrDefault(u =>
-                u.Email == request.Email && u.Password == request.Password
+                u.Email == request.Email
             );
 
+            // if entered email not in db then error
             if (user == null)
             {
                 Console.WriteLine($"Failed login attempt for email: {request.Email}");
                 return Unauthorized("Invalid email or password.");
+            }
+
+            // check if hashed passwords match 
+            var hasher = new PasswordHasher<User>();
+            var passwordPassed = hasher.VerifyHashedPassword(user, user.Password, request.Password);
+            // if not error
+            if (passwordPassed != PasswordVerificationResult.Success)
+            {
+                Console.WriteLine($"Failed login attempt for email: {request.Email}");
+                return Unauthorized("Invalid password.");
             }
 
             Console.WriteLine($"User with email {request.Email} logged in successfully.");
