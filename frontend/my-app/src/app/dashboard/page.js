@@ -101,6 +101,40 @@ export default function JobDashboard() {
     router.push(`/dashboard/add/`);
   }
 
+  async function handleUrcooked(id) {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    try {
+      const res = await fetch('https://localhost:7091/api/jobs/cooked', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ jobId: id })
+      });
+
+      if (res.status === 401) {
+        router.push('/login');
+        return;
+      }
+      if (!res.ok) {
+        throw new Error('Failed to mark job as cooked');
+      }
+
+      const msg = await res.text();
+      alert(msg);  // or however you want to show it
+    } catch (error) {
+      console.error(error);
+      alert(error.message);
+    }
+  }
+
+
   // Converts a list of skills into a string of comma-separated skills
   function skillListToSkillString(skills) {
     var skillString = '';
@@ -161,7 +195,7 @@ export default function JobDashboard() {
                 <td>{skillListToSkillString(skills)}</td>
                 <td>{contact}</td>
                 <td>
-                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }}>
+                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleUrCooked(id)}>
                     urCOOKED
                   </button>
                   <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleEdit(id)}>
