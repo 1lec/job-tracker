@@ -109,7 +109,7 @@ export default function JobDashboard() {
     }
 
     try {
-      const res = await fetch('https://localhost:7091/api/jobs/cooked', {
+      const res = await fetch('https://localhost:7091/api/grok', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
