@@ -109,7 +109,7 @@ export default function JobDashboard() {
     }
 
     try {
-      const res = await fetch('https://localhost:7091/api/grok', {
+      const res = await fetch('https://localhost:7091/api/grok/compare', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ export default function JobDashboard() {
                 <td>{skillListToSkillString(skills)}</td>
                 <td>{contact}</td>
                 <td>
-                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleUrCooked(id)}>
+                  <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleUrcooked(id)}>
                     urCOOKED
                   </button>
                   <button className={styles.cookedButton} style={{ marginRight: '0.5rem' }} onClick={() => handleEdit(id)}>
