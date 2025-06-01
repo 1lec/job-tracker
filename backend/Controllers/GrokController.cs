@@ -5,8 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using JobTracker.Backend.Models;
 using System.Linq;
-using Microsoft.SemanticKernel.ChatCompletion;
-using Microsoft.SemanticKernel.Connectors.OpenAI;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System.Net.Http.Headers;
 
 namespace JobTracker.Backend.Controllers
 {
@@ -32,8 +35,6 @@ namespace JobTracker.Backend.Controllers
             var userIdToken = User.FindFirst(ClaimTypes.NameIdentifier);
             var userId = int.Parse(userIdToken.Value);
 
-            // eager loading was based on https://learn.microsoft.com/en-us/ef/core/querying/related-data/eager
-
             // get job skills by job id
             var jobs = await _context.Jobs
                 .Include(j => j.JobSkills)
@@ -51,26 +52,50 @@ namespace JobTracker.Backend.Controllers
             // takes the skills and joins them one by one into a string
             var jobSkills = string.Join(", ", jobs.First().JobSkills.Select(jobSkill => jobSkill.Skill.Name));
             var userSkills = string.Join(", ", users.First().UserSkills.Select(userSkill => userSkill.Skill.Name));
+            // for debugging
+            Console.WriteLine($"jobSkills: {jobSkills}");
+            Console.WriteLine($"userSkills: {userSkills}");
 
-            // api call based on https://devblogs.microsoft.com/semantic-kernel/integrate-sk-with-xai-grok-easily/  
+            var prompt = $"Please compare this job's required skills: {jobSkills} with my skills: {userSkills}. Let me know my chances of getting this job based on this comparison and how I can improve my chances of getting this job. Write it in a witty way.";
 
-            var chatService = new OpenAIChatCompletionService(
-                modelId: "grok-beta", 
-                apiKey: "xai-jH06gHRactr1k17YDYCIUdXhe6cYPThOzJMWV20i4QC3Yv1QGVCB3R0KItlHVQ1luszL9dCodRB5qLk7", 
-                endpoint: new Uri("https://api.x.ai/v1")
-            );
-
-            ChatHistory chatHistory = new ChatHistory();
-            chatHistory.AddUserMessage(
-                $"Please compare this job's required skills: {jobSkills} with my skills: {userSkills}. Let me know my chances of getting this job based on this comparison and how I can improve my chances of getting this job. Write it in a witty way."
-            );
-
-            var settings = new OpenAIPromptExecutionSettings { MaxTokens = 200 };
-
-            var reply = await chatService.GetChatMessageContentAsync(chatHistory, settings);
+            var reply = await CallGrokDirectAsync(prompt);
+            // for debugging
             Console.WriteLine("Grok reply: " + reply);
 
-            return Content(reply.Content ?? string.Empty, "application/json");
+            return Content(reply ?? string.Empty, "application/json");
+        }
+
+        private async Task<string> CallGrokDirectAsync(string prompt)
+        {
+            // api call we used HttpClient which based on https://chatgpt.com/share/683ca6f8-43a8-800f-9901-5a53be232253
+            // saved me around an hour of research and learning. 
+            var apiKey = "xai-FlxF6ZOgzgmcLmf55XzBVDTleMo2SHHI7F5tGfhQZn3nSdReOj0ouqCBYx0E6eA6p3BHSUbXE37WUhY4";
+            var url = "https://api.x.ai/v1/chat/completions";
+           // json request
+            var requestData = $@"
+            {{
+                ""model"": ""grok-3-mini"",
+                ""messages"": [
+                    {{ ""role"": ""user"", ""content"": ""{prompt}"" }}
+                ]
+            }}";
+
+            // creating http client instance then making the content a string then using it as a response
+            using var client = new HttpClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+            var content = new StringContent(requestData, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync(url, content);
+            var responseString = await response.Content.ReadAsStringAsync();
+
+           // parsing response for reply
+            using var doc = JsonDocument.Parse(responseString);
+            var reply = doc.RootElement
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString();
+
+            return reply;
         }
     }
 } 
