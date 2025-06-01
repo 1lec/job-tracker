@@ -1,13 +1,32 @@
 // src/app/components/Header.js
+'use client';
 
-import { Rowdies } from "next/font/google";
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
 import Link from "next/link";
+import { NonceProvider } from 'react-select';
+
+const logoutButtonSytle = {
+  background: "var(--beaverOrange)",
+  border: 'none',
+  cursor: 'pointer',
+  fontFamily: 'var(--font-geist-sans)',
+  color: "white",
+  fontSize: '1.00125rem',
+}
 
 export default function Header() {
+  const router = useRouter();
+
+  function handleLogout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    router.push('/login');
+  }
+
   return (
     <header style={{
-        fontFamily: 'var(--font-geist-sans)', // <- this line
+        fontFamily: 'var(--font-geist-sans)',
         color: "white",
         position: "fixed",
         top: 0,
@@ -39,6 +58,9 @@ export default function Header() {
       <nav style={{ display: "flex", gap: "1.5rem" }}>
         <Link href="/dashboard">Dashboard</Link>
         <Link href="/profile">Profile</Link>
+        <button style={logoutButtonSytle} onClick={() => handleLogout()}>
+          Logout
+        </button>
       </nav>
     </header>
   );
