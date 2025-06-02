@@ -69,7 +69,7 @@ namespace JobTracker.Backend.Controllers
         {
             // api call we used HttpClient which based on https://chatgpt.com/share/683ca6f8-43a8-800f-9901-5a53be232253
             // saved me around an hour of research and learning. 
-            var apiKey = Environment.GetEnvironmentVariable("XAI_API_KEY");
+            var apiKey = Environment.GetEnvironmentVariable("API_KEY");
             var url = "https://api.x.ai/v1/chat/completions";
            // json request
             var requestData = $@"
